@@ -37,6 +37,10 @@
   .kit strong { color: var(--accent); }
   .kit .price { font-weight: 700; }
   .fine { font-size: 0.85rem; color: var(--muted); }
+  .meth table { border-collapse: collapse; width: 100%; font-size: 0.9rem; margin: 10px 0; }
+  .meth th, .meth td { border: 1px solid #e2e8f0; padding: 8px 10px; text-align: left; vertical-align: top; }
+  .meth th { background: #f8fafc; }
+  .meth h3 { margin-top: 22px; }
   .email-capture { border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px 16px; margin: 16px 0; background: #fbfdfc; }
   .email-capture h3 { margin: 0 0 6px; }
   .email-capture label { display: block; font-weight: 600; margin-bottom: 4px; }
@@ -60,7 +64,7 @@
 
   <header class="top">
     <h1>Home Health Agency Self-Audit</h1>
-    <p>Answer 8 questions about your agency. Get a risk score from 0 to 100, your three biggest problem areas, and plain-language fixes. Free, takes about 2 minutes, and nothing you enter ever leaves your browser.</p>
+    <p>Answer 8 questions about your agency. Get a risk score from 0 to 100, your three biggest problem areas, and plain-language fixes. Free, takes about 2 minutes. Everything runs in your browser: nothing you enter is uploaded or stored. The only thing that ever leaves your browser is the optional email signup below, which goes to Substack.</p>
   </header>
 
   <form class="card" id="audit-form" onsubmit="return runAudit(event)">
@@ -71,7 +75,7 @@
     </div>
     <div class="q">
       <label for="readmission_rate">2. Hospital readmission rate (percent)</label>
-      <div class="help">Of your patients discharged home, what percent end up back in the hospital within 30 days? National average is roughly 15.</div>
+      <div class="help">Of your patients discharged home, what percent are readmitted to a hospital within 30 days?</div>
       <input id="readmission_rate" type="number" min="0" max="100" step="0.5" value="15">
     </div>
     <div class="q">
@@ -86,17 +90,17 @@
     </div>
     <div class="q">
       <label for="turnover_rate">5. Annual caregiver turnover rate (percent)</label>
-      <div class="help">Caregivers who left in the last 12 months divided by your average caregiver headcount.</div>
+      <div class="help">Caregivers who left in the last 12 months divided by your average caregiver headcount. This does not affect your numeric score. It tailors your recommendations.</div>
       <input id="turnover_rate" type="number" min="0" max="200" step="1" value="30">
     </div>
     <div class="q">
       <label for="soc_delay_days">6. Average days from referral to start of care</label>
-      <div class="help">How many days pass between receiving a referral and the first visit?</div>
+      <div class="help">How many days pass between receiving a referral and the first visit? This does not affect your numeric score. It tailors your recommendations.</div>
       <input id="soc_delay_days" type="number" min="0" max="60" step="0.5" value="2">
     </div>
     <div class="q">
       <label for="documentation_lag_hours">7. Average hours from visit to finished documentation</label>
-      <div class="help">How long after a visit until the note is complete and signed?</div>
+      <div class="help">How long after a visit until the note is complete and signed? This does not affect your numeric score. It tailors your recommendations.</div>
       <input id="documentation_lag_hours" type="number" min="0" max="720" step="1" value="24">
     </div>
     <div class="q">
@@ -128,7 +132,7 @@
       <div>
         <div style="margin-bottom:8px"><span class="tier" id="tier-badge">Low</span></div>
         <div id="summary-line" style="max-width:420px"></div>
-        <div class="fine" style="margin-top:8px">Estimated reimbursement impact: <strong id="pay-impact"></strong></div>
+        <p class="fine" style="margin-top:8px">How your score is built: questions 1 to 4 only (star rating, readmission rate, patient satisfaction, OASIS timeliness). Questions 5 to 8 (turnover, start-of-care delay, documentation lag, referral source) shape your recommendations. They do not change your score.</p>
       </div>
     </div>
 
@@ -136,6 +140,7 @@
     <div id="drivers"></div>
 
     <h3>Recommended actions</h3>
+    <p class="fine">A note on scope: the score above uses Medicare-certified home health measures (CMS star rating, HHCAHPS satisfaction, OASIS timeliness, hospital readmissions). Some linked toolkits are written for non-medical home care instead (private-pay clients, caregiver teams). Each toolkit link states its scope, so you know which world the full fix is written for.</p>
     <div id="recs"></div>
 
     <div class="email-capture noprint">
@@ -156,7 +161,58 @@
       <button class="ghost" onclick="document.getElementById('audit-form').scrollIntoView({behavior:'smooth'})">Run it again</button>
     </div>
 
-    <p class="fine">How this works: each input feeds a weighted scoring model. Star rating gaps, readmissions, satisfaction gaps, and OASIS timeliness each add points; 100 is maximum risk. This is a working model based on the professional judgment of Dr. Devon Boswell of Boswell Consulting Group. It is not a CMS-validated instrument, and it is not clinical, legal, or financial advice. Your answers are processed in your browser. Nothing is uploaded, stored, or shared.</p>
+    <p class="fine">How this works: the 0 to 100 risk score uses only questions 1 to 4 (star rating, readmission rate, patient satisfaction, OASIS timeliness). Questions 5 to 8 (turnover, start-of-care delay, documentation lag, referral source) shape your recommendations and never change the score. The weights are a working model based on the professional judgment of Dr. Devon Boswell of Boswell Consulting Group. This tool does not draw on his doctoral research. It is not a CMS-validated instrument, and it is not clinical, legal, or financial advice. See Methodology and Sources below.</p>
+
+    <p class="fine"><strong>Privacy:</strong> everything runs in your browser. Your answers are never uploaded, stored, or shared. There is no backend, no account, and no tracking. The only exception is the optional "Want your results by email?" box above: if you enter an address, this tool opens Substack in a new tab so you can subscribe there. Substack handles the signup; this tool does not send, store, or see your email address.</p>
+  </section>
+
+  <section class="card meth" id="methodology" aria-label="Methodology and sources">
+    <h2 style="margin-top:0">Methodology and Sources</h2>
+
+    <h3>What the score measures</h3>
+    <p>The score is a working risk model, 0 to 100, higher is worse. It answers one question: how much operational risk do your agency's own numbers suggest, based on four Medicare-certified home health quality measures?</p>
+    <table>
+      <tr><th>Input</th><th>Weight</th><th>How it scores</th></tr>
+      <tr><td>CMS Quality of Patient Care star rating</td><td>15 pts</td><td>Each star below 5 adds 15 points</td></tr>
+      <tr><td>Hospital readmission rate (percent)</td><td>2 pts</td><td>Each percentage point adds 2 points</td></tr>
+      <tr><td>Patient satisfaction (percent)</td><td>1.2 pts</td><td>Each point below 100 adds 1.2 points</td></tr>
+      <tr><td>OASIS documentation on-time rate (percent)</td><td>1.1 pts</td><td>Each point below 100 adds 1.1 points</td></tr>
+    </table>
+    <p class="fine">The points are added, rounded to a whole number, and capped at 100. Risk bands: under 50 is Low, 50 to 74 is Moderate, 75 and up is High.</p>
+
+    <h3>What does not affect the score</h3>
+    <p>Turnover, start-of-care delay, documentation lag, and referral source (questions 5 to 8) never change the numeric score. They only decide which recommendations you see. The flag thresholds are working assumptions, not validated cutoffs:</p>
+    <table>
+      <tr><th>Flag</th><th>Threshold</th><th>Status</th></tr>
+      <tr><td>Caregiver turnover</td><td>Above 25% in 12 months</td><td>Working assumption</td></tr>
+      <tr><td>Start-of-care delay</td><td>More than 2 days, referral to first visit</td><td>Working assumption</td></tr>
+      <tr><td>Documentation lag</td><td>More than 24 hours, visit to signed note</td><td>Working assumption</td></tr>
+      <tr><td>OASIS timeliness (recommendation trigger)</td><td>Below 92% on-time</td><td>Working assumption</td></tr>
+      <tr><td>Readmission (recommendation trigger)</td><td>Above 14%</td><td>Working assumption</td></tr>
+      <tr><td>Satisfaction (recommendation trigger)</td><td>Below 90%</td><td>Working assumption</td></tr>
+    </table>
+
+    <h3>What the score does and does not mean</h3>
+    <p><strong>It does:</strong> give you a structured read on your own numbers, flag the biggest drivers, and point you at concrete next steps.</p>
+    <p><strong>It does not:</strong> benchmark you against other agencies, predict revenue or reimbursement, diagnose compliance problems, or replace an operational audit. There is no CMS data, no national benchmark, and no external dataset behind it. Every input is self-reported by you.</p>
+
+    <h3>Medicare-certified measures vs. home care links</h3>
+    <p>The four scored inputs come from the Medicare-certified home health world: CMS star ratings, HHCAHPS satisfaction, and OASIS are Medicare program measures. Two linked toolkits, the Caregiver Pay and Retention Playbook and the Private-Pay Client Playbook, are written for non-medical home care (caregiver teams and private-pay clients). Each link states its scope so the two worlds are never confused.</p>
+
+    <h3>Limits</h3>
+    <ul>
+      <li>All inputs are self-reported. The tool cannot verify them.</li>
+      <li>The weights and thresholds reflect the author's professional judgment from years running Boswell Consulting Group and working inside home health operations. They are not validated research, and this tool does not draw on the author's doctoral research.</li>
+      <li>Not a CMS-validated instrument. Not clinical, legal, or financial advice.</li>
+      <li>Correlation is not causation: a high score means your numbers look risky, not that any specific outcome will happen.</li>
+    </ul>
+
+    <h3>Sources</h3>
+    <ul>
+      <li>Federal rules require OASIS assessments to be transmitted within 30 days of the assessment (42 CFR 484.45).</li>
+      <li>CMS publishes Quality of Patient Care Star Ratings for home health agencies on Care Compare.</li>
+      <li>Everything else on this page, including every weight, threshold, and interpretation, is the author's professional judgment. No national benchmarks, no CMS datasets, and no third-party studies are used.</li>
+    </ul>
   </section>
 
   <footer>
@@ -214,7 +270,6 @@ function runAudit(e) {
   badge.textContent = risk.risk_tier + " risk";
   badge.className = "tier " + risk.risk_tier;
   document.getElementById("summary-line").textContent = buildSummary(risk, recs);
-  document.getElementById("pay-impact").textContent = risk.payment_impact_pct + "%";
 
   var d = document.getElementById("drivers");
   d.innerHTML = "";
@@ -246,7 +301,9 @@ function runAudit(e) {
       var s2 = document.createElement("span"); s2.className = "price"; s2.textContent = k.price;
       var br = document.createElement("br");
       var s3 = document.createElement("span"); s3.textContent = k.blurb;
-      a.appendChild(s1); a.appendChild(s2); a.appendChild(br); a.appendChild(s3);
+      var br2 = document.createElement("br");
+      var s4 = document.createElement("span"); s4.className = "fine"; s4.textContent = k.scope;
+      a.appendChild(s1); a.appendChild(s2); a.appendChild(br); a.appendChild(s3); a.appendChild(br2); a.appendChild(s4);
       el.appendChild(a);
     }
     r.appendChild(el);
@@ -265,6 +322,7 @@ function resultsText() {
   lines.push("");
   lines.push("Risk score: " + lastRisk.risk_score + " out of 100");
   lines.push("Risk tier: " + lastRisk.risk_tier + " risk");
+  lines.push("Score basis: questions 1-4 only (star rating, readmission rate, satisfaction, OASIS). Questions 5-8 shape recommendations, not the score.");
   lines.push("");
   lines.push("Top 3 drivers:");
   lastRisk.drivers.slice(0, 3).forEach(function (drv, i) {
