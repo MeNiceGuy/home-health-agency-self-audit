@@ -4,6 +4,12 @@ A free, open-source operational health check for home health agency owners. Answ
 
 **Live demo:** enable GitHub Pages on this repo (Settings > Pages > Deploy from branch > main) and it runs at `https://<username>.github.io/home-health-agency-self-audit/`.
 
+## Watch the demo
+
+[![Watch the 3 minute 41 second demo](https://img.youtube.com/vi/zzipY27IaWw/hqdefault.jpg)](https://www.youtube.com/watch?v=zzipY27IaWw)
+
+A 3 minute 41 second walkthrough of the tool: the 8 questions, the score, and how to read your results.
+
 ## Why this exists
 
 In the author's professional observation, most agencies find out they have an operations problem when it is already expensive: a star rating drops, readmissions spike, or caregivers quit in numbers that hurt. This tool gives owners a fast, honest read on where they stand before that happens.
