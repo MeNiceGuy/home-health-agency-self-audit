@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home Health Agency Self-Audit - Free Operational Health Check</title>
+<meta name="description" content="A free 2-minute self-audit for home health agency owners. Answer 8 questions, get a risk score and plain-language fixes. Runs entirely in your browser.">
+<style>
+  :root { --ink: #1a2332; --muted: #5b6b80; --accent: #0f766e; --warn: #b45309; --bad: #b91c1c; --good: #15803d; --bg: #f6f8fa; --card: #ffffff; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: var(--ink); background: var(--bg); line-height: 1.55; }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 24px 18px 64px; }
+  header.top { text-align: center; margin: 12px 0 28px; }
+  header.top h1 { font-size: 1.7rem; margin: 0 0 8px; }
+  header.top p { color: var(--muted); margin: 0 auto; max-width: 560px; }
+  .card { background: var(--card); border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; margin-bottom: 18px; }
+  .q { margin-bottom: 20px; }
+  .q label { display: block; font-weight: 600; margin-bottom: 4px; }
+  .q .help { font-size: 0.88rem; color: var(--muted); margin-bottom: 8px; }
+  .q input, .q select { width: 100%; max-width: 280px; padding: 10px 12px; font-size: 1rem; border: 1px solid #cbd5e1; border-radius: 8px; }
+  .row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+  button { cursor: pointer; font-size: 1rem; border-radius: 8px; padding: 12px 22px; border: 1px solid transparent; }
+  .primary { background: var(--accent); color: #fff; font-weight: 700; }
+  .ghost { background: #fff; border-color: #cbd5e1; color: var(--ink); }
+  #results { display: none; }
+  .score-band { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .dial { width: 148px; height: 148px; flex: none; }
+  .tier { display: inline-block; font-weight: 700; padding: 4px 14px; border-radius: 999px; color: #fff; }
+  .tier.High { background: var(--bad); } .tier.Moderate { background: var(--warn); } .tier.Low { background: var(--good); }
+  .driver { border-left: 4px solid var(--accent); padding: 8px 12px; margin: 10px 0; background: #f0fdfa; border-radius: 0 8px 8px 0; }
+  .driver strong { display: block; }
+  .driver span { font-size: 0.9rem; color: var(--muted); }
+  .rec { border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px 16px; margin: 12px 0; }
+  .rec p { margin: 0 0 10px; }
+  .kit { display: block; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 12px; text-decoration: none; color: var(--ink); }
+  .kit:hover { border-color: var(--accent); }
+  .kit strong { color: var(--accent); }
+  .kit .price { font-weight: 700; }
+  .fine { font-size: 0.85rem; color: var(--muted); }
+  footer { text-align: center; margin-top: 36px; }
+  footer a { color: var(--accent); }
+  .actions { display: flex; gap: 12px; flex-wrap: wrap; margin: 18px 0; }
+  @media print {
+    header.top .actions, .actions, form.card, .noprint { display: none !important; }
+    #results { display: block !important; }
+    body { background: #fff; }
+    .wrap { max-width: 100%; padding: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <h1>Home Health Agency Self-Audit</h1>
+    <p>Answer 8 questions about your agency. Get a risk score from 0 to 100, your three biggest problem areas, and plain-language fixes. Free, takes about 2 minutes, and nothing you enter ever leaves your browser.</p>
+  </header>
+
+  <form class="card" id="audit-form" onsubmit="return runAudit(event)">
+    <div class="q">
+      <label for="star_rating">1. Your CMS Quality of Patient Care star rating</label>
+      <div class="help">1 to 5. If you do not know it, leave the default of 3.</div>
+      <input id="star_rating" type="number" min="1" max="5" step="0.5" value="3">
+    </div>
+    <div class="q">
+      <label for="readmission_rate">2. Hospital readmission rate (percent)</label>
+      <div class="help">Of your patients discharged home, what percent end up back in the hospital within 30 days? National average is roughly 15.</div>
+      <input id="readmission_rate" type="number" min="0" max="100" step="0.5" value="15">
+    </div>
+    <div class="q">
+      <label for="patient_satisfaction">3. Patient satisfaction score (percent)</label>
+      <div class="help">Your HHCAHPS summary or internal survey score, as a percent.</div>
+      <input id="patient_satisfaction" type="number" min="0" max="100" step="1" value="85">
+    </div>
+    <div class="q">
+      <label for="oasis_timeliness">4. OASIS documentation on-time rate (percent)</label>
+      <div class="help">What percent of OASIS assessments are completed and transmitted on time?</div>
+      <input id="oasis_timeliness" type="number" min="0" max="100" step="1" value="90">
+    </div>
+    <div class="q">
+      <label for="turnover_rate">5. Annual caregiver turnover rate (percent)</label>
+      <div class="help">Caregivers who left in the last 12 months divided by your average caregiver headcount.</div>
+      <input id="turnover_rate" type="number" min="0" max="200" step="1" value="30">
+    </div>
+    <div class="q">
+      <label for="soc_delay_days">6. Average days from referral to start of care</label>
+      <div class="help">How many days pass between receiving a referral and the first visit?</div>
+      <input id="soc_delay_days" type="number" min="0" max="60" step="0.5" value="2">
+    </div>
+    <div class="q">
+      <label for="documentation_lag_hours">7. Average hours from visit to finished documentation</label>
+      <div class="help">How long after a visit until the note is complete and signed?</div>
+      <input id="documentation_lag_hours" type="number" min="0" max="720" step="1" value="24">
+    </div>
+    <div class="q">
+      <label for="referral_source">8. Where do most of your new clients come from?</label>
+      <div class="help">This one does not affect your score. It tailors your recommendations.</div>
+      <select id="referral_source">
+        <option value="hospital">Hospital and facility referrals</option>
+        <option value="word">Word of mouth</option>
+        <option value="online">Online search and ads</option>
+        <option value="few">We get few new clients</option>
+      </select>
+    </div>
+    <div class="actions">
+      <button class="primary" type="submit">Get my score</button>
+      <button class="ghost" type="button" onclick="loadSample()">Load sample agency</button>
+    </div>
+  </form>
+
+  <section class="card" id="results" aria-live="polite">
+    <h2 style="margin-top:0">Your results</h2>
+    <div class="score-band">
+      <svg class="dial" viewBox="0 0 148 148" role="img" aria-label="Risk score dial">
+        <circle cx="74" cy="74" r="64" fill="none" stroke="#e2e8f0" stroke-width="14"/>
+        <circle id="dial-arc" cx="74" cy="74" r="64" fill="none" stroke="#0f766e" stroke-width="14"
+                stroke-linecap="round" transform="rotate(-90 74 74)" stroke-dasharray="402" stroke-dashoffset="402"/>
+        <text id="dial-num" x="74" y="70" text-anchor="middle" font-size="34" font-weight="700" fill="#1a2332">0</text>
+        <text x="74" y="94" text-anchor="middle" font-size="13" fill="#5b6b80">out of 100</text>
+      </svg>
+      <div>
+        <div style="margin-bottom:8px"><span class="tier" id="tier-badge">Low</span></div>
+        <div id="summary-line" style="max-width:420px"></div>
+        <div class="fine" style="margin-top:8px">Estimated reimbursement impact: <strong id="pay-impact"></strong></div>
+      </div>
+    </div>
+
+    <h3>Your three biggest drivers</h3>
+    <div id="drivers"></div>
+
+    <h3>Recommended actions</h3>
+    <div id="recs"></div>
+
+    <div class="actions noprint">
+      <button class="ghost" onclick="window.print()">Print or save as PDF</button>
+      <button class="ghost" onclick="document.getElementById('audit-form').scrollIntoView({behavior:'smooth'})">Run it again</button>
+    </div>
+
+    <p class="fine">How this works: each input feeds a weighted scoring model. Star rating gaps, readmissions, satisfaction gaps, and OASIS timeliness each add points; 100 is maximum risk. This is a working model based on the professional judgment of Dr. Devon Boswell of Boswell Consulting Group. It is not a CMS-validated instrument, and it is not clinical, legal, or financial advice. Your answers are processed in your browser. Nothing is uploaded, stored, or shared.</p>
+  </section>
+
+  <footer>
+    <p class="fine">Free tool by <a href="https://drboswell.gumroad.com/">Boswell Consulting Group</a>. More operational toolkits for home care agencies on <a href="https://drboswell.gumroad.com/">Gumroad</a>.</p>
+  </footer>
+</div>
+
+<script src="audit.js"></script>
+<script>
+function readInputs() {
+  return {
+    star_rating: document.getElementById("star_rating").value,
+    readmission_rate: document.getElementById("readmission_rate").value,
+    patient_satisfaction: document.getElementById("patient_satisfaction").value,
+    oasis_timeliness: document.getElementById("oasis_timeliness").value,
+    turnover_rate: document.getElementById("turnover_rate").value,
+    soc_delay_days: document.getElementById("soc_delay_days").value,
+    documentation_lag_hours: document.getElementById("documentation_lag_hours").value,
+    referral_source: document.getElementById("referral_source").value
+  };
+}
+function loadSample() {
+  var s = SAMPLE_AGENCY;
+  document.getElementById("star_rating").value = s.star_rating;
+  document.getElementById("readmission_rate").value = s.readmission_rate;
+  document.getElementById("patient_satisfaction").value = s.patient_satisfaction;
+  document.getElementById("oasis_timeliness").value = s.oasis_timeliness;
+  document.getElementById("turnover_rate").value = s.turnover_rate;
+  document.getElementById("soc_delay_days").value = s.soc_delay_days;
+  document.getElementById("documentation_lag_hours").value = s.documentation_lag_hours;
+  document.getElementById("referral_source").value = s.referral_source;
+  runAudit(null);
+  document.getElementById("results").scrollIntoView({ behavior: "smooth" });
+}
+function runAudit(e) {
+  if (e) e.preventDefault();
+  var p = readInputs();
+  var risk = computeRiskModel(p);
+  var flags = operationalFlags(p);
+  var recs = generateRecommendations(p, risk, flags);
+
+  var C = 2 * Math.PI * 64;
+  var arc = document.getElementById("dial-arc");
+  arc.style.strokeDashoffset = C - (C * risk.risk_score / 100);
+  arc.setAttribute("stroke", risk.risk_tier === "High" ? "#b91c1c" : risk.risk_tier === "Moderate" ? "#b45309" : "#15803d");
+  document.getElementById("dial-num").textContent = risk.risk_score;
+  var badge = document.getElementById("tier-badge");
+  badge.textContent = risk.risk_tier + " risk";
+  badge.className = "tier " + risk.risk_tier;
+  document.getElementById("summary-line").textContent = buildSummary(risk, recs);
+  document.getElementById("pay-impact").textContent = risk.payment_impact_pct + "%";
+
+  var d = document.getElementById("drivers");
+  d.innerHTML = "";
+  risk.drivers.slice(0, 3).forEach(function (drv) {
+    var el = document.createElement("div");
+    el.className = "driver";
+    el.innerHTML = "<strong></strong><span></span>";
+    el.querySelector("strong").textContent = drv.label + ": +" + Math.round(drv.points) + " points";
+    el.querySelector("span").textContent = drv.detail;
+    d.appendChild(el);
+  });
+
+  var r = document.getElementById("recs");
+  r.innerHTML = "";
+  recs.forEach(function (rec) {
+    var el = document.createElement("div");
+    el.className = "rec";
+    var pEl = document.createElement("p");
+    pEl.textContent = rec.text;
+    el.appendChild(pEl);
+    if (rec.kit && KITS[rec.kit]) {
+      var k = KITS[rec.kit];
+      var a = document.createElement("a");
+      a.className = "kit";
+      a.href = k.url;
+      a.target = "_blank";
+      a.rel = "noopener";
+      var s1 = document.createElement("strong"); s1.textContent = "Fix this with: " + k.name + " ";
+      var s2 = document.createElement("span"); s2.className = "price"; s2.textContent = k.price;
+      var br = document.createElement("br");
+      var s3 = document.createElement("span"); s3.textContent = k.blurb;
+      a.appendChild(s1); a.appendChild(s2); a.appendChild(br); a.appendChild(s3);
+      el.appendChild(a);
+    }
+    r.appendChild(el);
+  });
+
+  var res = document.getElementById("results");
+  res.style.display = "block";
+  res.scrollIntoView({ behavior: "smooth" });
+  return false;
+}
+</script>
+</body>
+</html>
