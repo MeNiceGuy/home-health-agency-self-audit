@@ -4,6 +4,12 @@
  * Ported from Boswell Consulting Group's internal Python model (intelligence_engine.py).
  * Pure functions: an input object goes in, a score and recommendations come out.
  * Everything runs in the browser. No data is uploaded or stored anywhere.
+ *
+ * Scoring basis: the numeric score (0-100) uses ONLY star rating, readmission
+ * rate, patient satisfaction, and OASIS timeliness. Turnover, start-of-care
+ * delay, documentation lag, and referral source do NOT change the score; they
+ * only shape the recommendations. See the Methodology and Sources section in
+ * index.html and README.md for the full model description.
  */
 
 var KITS = {
@@ -11,19 +17,22 @@ var KITS = {
     name: "Operations Audit Toolkit",
     price: "$39",
     url: "https://drboswell.gumroad.com/l/operations-audit-toolkit",
-    blurb: "Excel workbook plus playbook that walks you through a full operational audit, step by step."
+    blurb: "Excel workbook plus playbook that walks you through a full operational audit, step by step.",
+    scope: "Written for Medicare-certified home health and non-medical home care agencies."
   },
   retention: {
     name: "Caregiver Pay & Retention Playbook",
     price: "$29",
     url: "https://drboswell.gumroad.com/l/caregiver-pay-retention-playbook",
-    blurb: "Pay benchmarking, retention math, and the first-90-days onboarding structure that keeps new hires."
+    blurb: "Pay benchmarking, retention math, and the first-90-days onboarding structure that keeps new hires.",
+    scope: "Written for caregiver and aide teams (non-medical home care focus)."
   },
   privatePay: {
     name: "Private-Pay Client Playbook",
     price: "$39",
     url: "https://drboswell.gumroad.com/l/private-pay-client-playbook",
-    blurb: "Where private-pay clients actually come from, plus a referral pipeline tracker."
+    blurb: "Where private-pay clients actually come from, plus a referral pipeline tracker.",
+    scope: "Written for private-pay (non-medical) home care."
   }
 };
 
@@ -36,6 +45,7 @@ function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
 }
 
+/* The numeric score uses only these four inputs. */
 function computeRiskModel(p) {
   var star = clamp(num(p.star_rating, 3), 1, 5);
   var readmit = clamp(num(p.readmission_rate, 15), 0, 100);
@@ -51,28 +61,30 @@ function computeRiskModel(p) {
   total = Math.min(total, 100);
 
   var tier = total >= 75 ? "High" : total >= 50 ? "Moderate" : "Low";
-  var paymentImpact = Math.round((total / 100) * -5 * 100) / 100;
 
   var drivers = [
     { label: "Quality star rating gap", points: starRisk,
-      detail: "Each star below 5 adds 15 points. Star ratings drive referrals and payer attention." },
+      detail: "Each star below 5 adds 15 points. CMS publishes star ratings on Care Compare, so referral sources can see them. The weight is the author's professional judgment." },
     { label: "Hospital readmissions", points: readmitRisk,
-      detail: "Each point of readmission rate adds 2 points. Readmissions are the costliest failure in home health." },
+      detail: "Each point of readmission rate adds 2 points. In the author's professional judgment, readmissions are one of the most expensive things that can go wrong in a home health operation." },
     { label: "Patient satisfaction gap", points: satisfactionRisk,
-      detail: "Each point below 100 adds 1.2 points. Low satisfaction shows up as complaints, then as lost referrals." },
+      detail: "Each point below 100 adds 1.2 points. In the author's professional judgment, low satisfaction tends to surface first as complaints and later as lost referrals." },
     { label: "OASIS documentation timeliness gap", points: oasisRisk,
-      detail: "Each point below 100 adds 1.1 points. Late OASIS means late claims and cash flow drag." }
+      detail: "Each point below 100 adds 1.1 points. Federal rules require OASIS assessments to be transmitted within 30 days of the assessment (42 CFR 484.45); in the author's professional judgment, late OASIS work drags on claims and cash flow." }
   ].sort(function (a, b) { return b.points - a.points; });
 
   return {
     risk_score: total,
     risk_tier: tier,
-    payment_impact_pct: paymentImpact,
     drivers: drivers,
     inputs: { star: star, readmit: readmit, satisfaction: satisfaction, oasis: oasis }
   };
 }
 
+/*
+ * Operational flags. These thresholds are working assumptions, not validated
+ * cutoffs. They trigger targeted recommendations; they never change the score.
+ */
 function operationalFlags(p) {
   var flags = [];
   if (num(p.turnover_rate, 0) > 25) flags.push("turnover");
@@ -95,19 +107,19 @@ function generateRecommendations(p, risk, flags) {
   }
   if (oasis < 92 || flags.indexOf("doc_lag") !== -1) {
     recs.push({
-      text: "Documentation is lagging. Late OASIS and visit notes delay claims and hide problems until they are expensive. Set a 24-hour documentation rule and track completion by clinician every week.",
+      text: "Documentation is lagging. Late OASIS and visit notes delay claims and hide problems until they are expensive. Set an internal documentation standard that meets your payers' requirements and your agency's own policy, then track completion by clinician every week.",
       kit: "audit"
     });
   }
   if (flags.indexOf("turnover") !== -1) {
     recs.push({
-      text: "Turnover above 25 percent means you are paying the full hiring cost over and over. Benchmark your pay against local competitors and structure the first 90 days like a program, not probation: a week-one check-in, a 30-day schedule review, and consistent hours.",
+      text: "Turnover above 25 percent means hiring and training costs repeat on a loop. Benchmark your pay against local competitors and structure the first 90 days like a program, not probation: a week-one check-in, a 30-day schedule review, and consistent hours.",
       kit: "retention"
     });
   }
   if (flags.indexOf("soc_delay") !== -1) {
     recs.push({
-      text: "Starts of care are taking too long. Every day between referral and first visit is a day a hospital discharge planner can send the patient somewhere else. Map the intake workflow and find the step where referrals stall.",
+      text: "Starts of care are taking too long. In the author's experience, every day between referral and first visit is a day a hospital discharge planner can choose a different agency. Map the intake workflow and find the step where referrals stall.",
       kit: "audit"
     });
   }
@@ -142,7 +154,7 @@ function generateRecommendations(p, risk, flags) {
 function buildSummary(risk, recs) {
   var lines = [];
   lines.push("Risk level: " + risk.risk_tier + " (" + risk.risk_score + " out of 100).");
-  lines.push("Estimated reimbursement impact: " + risk.payment_impact_pct + " percent.");
+  lines.push("Score uses questions 1-4 only; questions 5-8 shape the recommendations, not the score.");
   lines.push("Top drivers: " + risk.drivers.slice(0, 3).map(function (d) {
     return d.label + " (" + Math.round(d.points) + " pts)";
   }).join(", ") + ".");
@@ -150,7 +162,7 @@ function buildSummary(risk, recs) {
   return lines.join(" ");
 }
 
-// Sample agency used by the "Load sample agency" button and the demo video.
+// Sample agency used by the "Load sample agency" button, the demo video, and the tests.
 var SAMPLE_AGENCY = {
   star_rating: 3.5,
   readmission_rate: 16,
