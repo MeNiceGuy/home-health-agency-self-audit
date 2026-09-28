@@ -37,6 +37,13 @@
   .kit strong { color: var(--accent); }
   .kit .price { font-weight: 700; }
   .fine { font-size: 0.85rem; color: var(--muted); }
+  .email-capture { border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px 16px; margin: 16px 0; background: #fbfdfc; }
+  .email-capture h3 { margin: 0 0 6px; }
+  .email-capture label { display: block; font-weight: 600; margin-bottom: 4px; }
+  .email-capture input[type="email"] { width: 100%; max-width: 320px; padding: 10px 12px; font-size: 1rem; border: 1px solid #cbd5e1; border-radius: 8px; }
+  .email-capture #email-error { display: none; color: #b91c1c; margin-top: 6px; }
+  .email-capture .email-btn { margin-top: 12px; }
+  #copy-confirm { display: none; align-self: center; color: var(--accent); font-weight: 700; }
   footer { text-align: center; margin-top: 36px; }
   footer a { color: var(--accent); }
   .actions { display: flex; gap: 12px; flex-wrap: wrap; margin: 18px 0; }
@@ -131,8 +138,21 @@
     <h3>Recommended actions</h3>
     <div id="recs"></div>
 
+    <div class="email-capture noprint">
+      <h3>Want your results by email?</h3>
+      <p class="fine">Optional. Entering an email below takes you to Substack to subscribe, and Substack handles the signup there. This tool does not send or store your email address.</p>
+      <form id="email-form" novalidate>
+        <label for="results-email">Email address</label>
+        <input id="results-email" type="email" autocomplete="email" placeholder="you@example.com">
+        <div class="fine" id="email-error" role="alert">That does not look like an email address. Please check it and try again.</div>
+        <div class="email-btn"><button class="primary" type="submit">Email me my results</button></div>
+      </form>
+    </div>
+
     <div class="actions noprint">
       <button class="ghost" onclick="window.print()">Print or save as PDF</button>
+      <button class="ghost" type="button" id="copy-results-btn">Copy my results</button>
+      <span class="fine" id="copy-confirm" role="status">Copied</span>
       <button class="ghost" onclick="document.getElementById('audit-form').scrollIntoView({behavior:'smooth'})">Run it again</button>
     </div>
 
@@ -146,6 +166,10 @@
 
 <script src="audit.js"></script>
 <script>
+// Holds the latest computed results so the copy button can reuse them.
+var lastRisk = null;
+var lastRecs = [];
+
 function readInputs() {
   return {
     star_rating: document.getElementById("star_rating").value,
@@ -177,6 +201,9 @@ function runAudit(e) {
   var risk = computeRiskModel(p);
   var flags = operationalFlags(p);
   var recs = generateRecommendations(p, risk, flags);
+  lastRisk = risk;
+  lastRecs = recs;
+  document.getElementById("copy-confirm").style.display = "none";
 
   var C = 2 * Math.PI * 64;
   var arc = document.getElementById("dial-arc");
@@ -230,6 +257,77 @@ function runAudit(e) {
   res.scrollIntoView({ behavior: "smooth" });
   return false;
 }
+
+// Builds a plain-text summary of the latest results.
+function resultsText() {
+  var lines = [];
+  lines.push("Home Health Agency Self-Audit: my results");
+  lines.push("");
+  lines.push("Risk score: " + lastRisk.risk_score + " out of 100");
+  lines.push("Risk tier: " + lastRisk.risk_tier + " risk");
+  lines.push("");
+  lines.push("Top 3 drivers:");
+  lastRisk.drivers.slice(0, 3).forEach(function (drv, i) {
+    lines.push((i + 1) + ". " + drv.label + ": +" + Math.round(drv.points) + " points");
+    lines.push("   " + drv.detail);
+  });
+  lines.push("");
+  lines.push("Recommended actions:");
+  lastRecs.forEach(function (rec, i) {
+    lines.push((i + 1) + ". " + rec.text);
+  });
+  return lines.join("\n");
+}
+
+// Textarea fallback for browsers without the clipboard API.
+function fallbackCopy(text) {
+  var ta = document.createElement("textarea");
+  ta.value = text;
+  ta.setAttribute("readonly", "");
+  ta.style.position = "fixed";
+  ta.style.top = "0";
+  ta.style.opacity = "0";
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand("copy"); } catch (e) { /* clipboard unavailable */ }
+  document.body.removeChild(ta);
+}
+
+function copyResults() {
+  if (!lastRisk) return;
+  var text = resultsText();
+  var done = function () {
+    var c = document.getElementById("copy-confirm");
+    c.style.display = "inline";
+    setTimeout(function () { c.style.display = "none"; }, 2500);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done, function () { fallbackCopy(text); done(); });
+  } else {
+    fallbackCopy(text);
+    done();
+  }
+}
+document.getElementById("copy-results-btn").addEventListener("click", copyResults);
+
+// Optional email capture: validate the address, then hand off to Substack in a new tab.
+function validEmail(value) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+document.getElementById("email-form").addEventListener("submit", function (e) {
+  e.preventDefault();
+  var input = document.getElementById("results-email");
+  var err = document.getElementById("email-error");
+  if (!validEmail(input.value.trim())) {
+    err.style.display = "block";
+    input.setAttribute("aria-invalid", "true");
+    input.focus();
+    return;
+  }
+  err.style.display = "none";
+  input.removeAttribute("aria-invalid");
+  window.open("https://drboswell.substack.com/subscribe", "_blank", "noopener");
+});
 </script>
 </body>
 </html>
