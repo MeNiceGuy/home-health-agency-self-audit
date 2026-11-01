@@ -178,7 +178,7 @@ check("results capture form is intact and working-shape", function () {
   assert.ok(html.indexOf('id="cap-state"') !== -1);
   assert.ok(html.indexOf('id="cap-type"') !== -1);
   assert.ok(html.indexOf("Your score is ready") !== -1);
-  assert.ok(html.indexOf("https://formsubmit.co/ajax/DrBoswell@boswellconsultingagency.com") !== -1);
+  assert.ok(html.indexOf("https://formsubmit.co/ajax/359af7a0ec42d917c26fedc684ecd01c") !== -1);
   assert.ok(html.indexOf("validEmail") !== -1);
 });
 check("privacy language is explicit in the page", function () {
