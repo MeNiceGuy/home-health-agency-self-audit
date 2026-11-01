@@ -14,30 +14,6 @@
  * index.html and README.md for the full model description.
  */
 
-var KITS = {
-  audit: {
-    name: "Operations Audit Toolkit",
-    price: "$49",
-    url: "https://drboswell.gumroad.com/l/operations-audit-toolkit",
-    blurb: "Excel workbook plus playbook that walks you through a full operational audit, step by step.",
-    scope: "Written for Medicare-certified home health and non-medical home care agencies."
-  },
-  retention: {
-    name: "Caregiver Pay & Retention Playbook",
-    price: "$29",
-    url: "https://drboswell.gumroad.com/l/caregiver-pay-retention-playbook",
-    blurb: "Pay benchmarking, retention math, and the first-90-days onboarding structure that keeps new hires.",
-    scope: "Written for caregiver and aide teams (non-medical home care focus)."
-  },
-  privatePay: {
-    name: "Private-Pay Client Playbook",
-    price: "$39",
-    url: "https://drboswell.gumroad.com/l/private-pay-client-playbook",
-    blurb: "Where private-pay clients actually come from, plus a referral pipeline tracker.",
-    scope: "Written for private-pay (non-medical) home care."
-  }
-};
-
 function num(value, fallback) {
   var n = parseFloat(value);
   return isFinite(n) ? n : fallback;
@@ -312,7 +288,7 @@ var SAMPLE_AGENCY_NM = {
 if (typeof module !== "undefined" && module.exports) {
   module.exports = { computeRiskModel: computeRiskModel, operationalFlags: operationalFlags,
     generateRecommendations: generateRecommendations, buildSummary: buildSummary,
-    SAMPLE_AGENCY: SAMPLE_AGENCY, KITS: KITS,
+    SAMPLE_AGENCY: SAMPLE_AGENCY,
     computeRiskModelNM: computeRiskModelNM, operationalFlagsNM: operationalFlagsNM,
     generateRecommendationsNM: generateRecommendationsNM, SAMPLE_AGENCY_NM: SAMPLE_AGENCY_NM };
 }
