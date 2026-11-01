@@ -1,9 +1,11 @@
 "use strict";
 /*
  * Home Health Agency Self-Audit - scoring model.
- * Ported from Boswell Consulting Group's internal Python model (intelligence_engine.py).
+ * Ported from Boswell Consulting Agency's internal Python model (intelligence_engine.py).
  * Pure functions: an input object goes in, a score and recommendations come out.
- * Everything runs in the browser. No data is uploaded or stored anywhere.
+ * Scoring runs in the browser. The page sends a visitor's contact details,
+ * answers, and score to Boswell Consulting Agency only when the visitor
+ * submits the short results form.
  *
  * Scoring basis: the numeric score (0-100) uses ONLY star rating, readmission
  * rate, patient satisfaction, and OASIS timeliness. Turnover, start-of-care
@@ -174,8 +176,143 @@ var SAMPLE_AGENCY = {
   referral_source: "word"
 };
 
+/*
+ * Non-medical home care track (added in the capture release).
+ * Same structure as the certified model: the numeric score (0-100) uses ONLY
+ * turnover, unfilled shifts, EVV/documentation exceptions, and delivered
+ * hours. Speed to first visit, supervisory visits, care plan reviews, and
+ * referral source do NOT change the score; they only shape recommendations.
+ * Weights are working assumptions from the author's professional judgment.
+ */
+function computeRiskModelNM(p) {
+  var turnover = clamp(num(p.nm_turnover_rate, 40), 0, 200);
+  var unfilled = clamp(num(p.nm_unfilled_rate, 5), 0, 100);
+  var evv = clamp(num(p.nm_evv_rate, 8), 0, 100);
+  var delivered = clamp(num(p.nm_utilization_rate, 90), 0, 100);
+
+  var turnoverRisk = turnover * 0.4;
+  var unfilledRisk = unfilled * 1.5;
+  var evvRisk = evv * 1.2;
+  var missedRisk = (100 - delivered) * 0.7;
+
+  var total = Math.round(turnoverRisk + unfilledRisk + evvRisk + missedRisk);
+  total = Math.min(total, 100);
+  var tier = total >= 75 ? "High" : total >= 50 ? "Moderate" : "Low";
+
+  var drivers = [
+    { label: "Caregiver turnover", points: turnoverRisk,
+      detail: "Each point of turnover adds 0.4 points. In the author's professional judgment, turnover is the most expensive recurring problem in non-medical home care: every exit repeats recruiting, onboarding, and training cost, and puts scheduled shifts at risk." },
+    { label: "Unfilled shifts", points: unfilledRisk,
+      detail: "Each point adds 1.5 points. An unfilled shift is missed care and missed revenue, and a family that gets stood up starts calling other agencies." },
+    { label: "EVV and documentation exceptions", points: evvRisk,
+      detail: "Each point adds 1.2 points. For Medicaid-funded personal care, federal law requires electronic visit verification capturing the service performed, the individual receiving it, the date, the location, the caregiver, and the start and end times (Section 12006 of the 21st Century Cures Act). Exceptions are where audits, payment holds, and corrective action plans start." },
+    { label: "Authorized hours not delivered", points: missedRisk,
+      detail: "Each point of authorized hours not delivered adds 0.7 points. Hours you won authorization for and did not staff are revenue you already earned on paper and gave back." }
+  ].sort(function (a, b) { return b.points - a.points; });
+
+  return {
+    risk_score: total,
+    risk_tier: tier,
+    drivers: drivers,
+    inputs: { turnover: turnover, unfilled: unfilled, evv: evv, delivered: delivered }
+  };
+}
+
+function operationalFlagsNM(p) {
+  var flags = [];
+  if (num(p.nm_soc_delay_days, 0) > 2) flags.push("soc_delay");
+  if ((p.nm_supervisory || "yes") !== "yes") flags.push("supervisory");
+  if ((p.nm_careplan || "yes") !== "yes") flags.push("careplan");
+  return flags;
+}
+
+function generateRecommendationsNM(p, risk, flags) {
+  var recs = [];
+  var turnover = num(p.nm_turnover_rate, 0);
+  var unfilled = num(p.nm_unfilled_rate, 0);
+  var evv = num(p.nm_evv_rate, 0);
+  var delivered = num(p.nm_utilization_rate, 100);
+
+  if (turnover > 40) {
+    recs.push({
+      text: "Turnover above 40 percent means hiring and training costs repeat on a loop. Benchmark your caregiver pay against local competitors and structure the first 90 days like a program, not probation: a week-one check-in, a 30-day schedule review, and consistent hours.",
+      kit: "retention"
+    });
+  }
+  if (unfilled > 5) {
+    recs.push({
+      text: "More than 1 in 20 shifts is going unfilled. Keep a live bench of backup caregivers for every area you serve, confirm every shift the day before, and track unfilled shifts by client and by caregiver every week so the pattern shows itself.",
+      kit: "audit"
+    });
+  }
+  if (evv > 10) {
+    recs.push({
+      text: "EVV and documentation exceptions above 10 percent are an audit finding waiting to happen. Review exceptions daily, fix them while the visit is still fresh, and make one person own the exception queue instead of letting it sit.",
+      kit: "audit"
+    });
+  }
+  if (delivered < 90) {
+    recs.push({
+      text: "You are delivering less than 90 percent of the hours you are authorized or scheduled for. That is won business leaking out through scheduling. Match caregiver availability to authorized hours before you take on new clients, and review the gap every week.",
+      kit: "audit"
+    });
+  }
+  if (flags.indexOf("soc_delay") !== -1) {
+    recs.push({
+      text: "New clients wait too long for a first visit. In the author's experience, every day between yes and the first visit is a day the family can call the next agency on the list. Map the intake steps and find where new clients stall.",
+      kit: "privatePay"
+    });
+  }
+  if (flags.indexOf("supervisory") !== -1) {
+    recs.push({
+      text: "Supervisory visits are slipping. Put them on a fixed cadence for every client, document every visit, and review the schedule monthly. Surveyors and families both read a missed supervisory visit as an agency that is not watching its own care.",
+      kit: "audit"
+    });
+  }
+  if (flags.indexOf("careplan") !== -1) {
+    recs.push({
+      text: "Care plans are going stale. Set a 90-day review rhythm for every active client, document changes in condition the day you hear about them, and keep the signed plan where a surveyor can pull it in one step.",
+      kit: "audit"
+    });
+  }
+  if (risk.risk_tier === "High") {
+    recs.push({
+      text: "High overall risk means this needs a full operational audit, not one-off fixes. Work through intake, staffing, documentation, and scheduling in order and fix the biggest driver first.",
+      kit: "audit"
+    });
+  }
+  var referral = (p.nm_referral_source || "").toLowerCase();
+  if (referral === "few" || referral === "word") {
+    recs.push({
+      text: "Your client pipeline depends on luck. Build one repeatable referral channel: pick ten local referral sources, visit them on a schedule, and track every referral to its source so you know what works.",
+      kit: "privatePay"
+    });
+  }
+  if (!recs.length) {
+    recs.push({
+      text: "Nothing is flashing red. Keep the weekly habits that got you here: watch turnover, unfilled shifts, and EVV exceptions every single week, because drift is how good agencies slide.",
+      kit: null
+    });
+  }
+  return recs;
+}
+
+// Sample non-medical agency used by the "Load sample agency" button on that track.
+var SAMPLE_AGENCY_NM = {
+  nm_turnover_rate: 55,
+  nm_unfilled_rate: 12,
+  nm_evv_rate: 18,
+  nm_utilization_rate: 78,
+  nm_soc_delay_days: 4,
+  nm_supervisory: "sometimes",
+  nm_careplan: "sometimes",
+  nm_referral_source: "word"
+};
+
 if (typeof module !== "undefined" && module.exports) {
   module.exports = { computeRiskModel: computeRiskModel, operationalFlags: operationalFlags,
     generateRecommendations: generateRecommendations, buildSummary: buildSummary,
-    SAMPLE_AGENCY: SAMPLE_AGENCY, KITS: KITS };
+    SAMPLE_AGENCY: SAMPLE_AGENCY, KITS: KITS,
+    computeRiskModelNM: computeRiskModelNM, operationalFlagsNM: operationalFlagsNM,
+    generateRecommendationsNM: generateRecommendationsNM, SAMPLE_AGENCY_NM: SAMPLE_AGENCY_NM };
 }
