@@ -32,10 +32,6 @@
   .driver span { font-size: 0.9rem; color: var(--muted); }
   .rec { border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px 16px; margin: 12px 0; }
   .rec p { margin: 0 0 10px; }
-  .kit { display: block; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 12px; text-decoration: none; color: var(--ink); }
-  .kit:hover { border-color: var(--accent); }
-  .kit strong { color: var(--accent); }
-  .kit .price { font-weight: 700; }
   .fine { font-size: 0.85rem; color: var(--muted); }
   .meth table { border-collapse: collapse; width: 100%; font-size: 0.9rem; margin: 10px 0; }
   .meth th, .meth td { border: 1px solid #e2e8f0; padding: 8px 10px; text-align: left; vertical-align: top; }
@@ -376,8 +372,8 @@
     <p><strong>It does:</strong> give you a structured read on your own numbers, flag the biggest drivers, and point you at concrete next steps.</p>
     <p><strong>It does not:</strong> benchmark you against other agencies, predict revenue or reimbursement, diagnose compliance problems, or replace an operational audit. There is no CMS data, no national benchmark, and no external dataset behind it. Every input is self-reported by you.</p>
 
-    <h3>Medicare-certified measures vs. home care links</h3>
-    <p>The four scored inputs come from the Medicare-certified home health world: CMS star ratings, HHCAHPS satisfaction, and OASIS are Medicare program measures. Two linked toolkits, the Caregiver Pay and Retention Playbook and the Private-Pay Client Playbook, are written for non-medical home care (caregiver teams and private-pay clients). Each link states its scope so the two worlds are never confused.</p>
+    <h3>Two tracks, two sets of measures</h3>
+    <p>The four scored inputs on the certified track come from the Medicare-certified home health world: CMS star ratings, HHCAHPS satisfaction, and OASIS are Medicare program measures. The non-medical track scores a different set of measures: caregiver turnover, unfilled shifts, EVV and documentation exceptions, and delivered hours. Each track states its scope so the two worlds are never confused.</p>
 
     <h3>Limits</h3>
     <ul>
@@ -397,8 +393,7 @@
   </section>
 
   <footer>
-    <p><strong>Want the full fix, not just the score?</strong> The Operations Audit Toolkit ($49) is the Excel workbook plus playbook that walks you through a complete operational audit, step by step: <a href="https://drboswell.gumroad.com/l/operations-audit-toolkit">get the Operations Audit Toolkit</a>.</p>
-    <p class="fine">Free tool by <a href="https://drboswell.gumroad.com/">Boswell Consulting Agency</a>. More operational toolkits for home care agencies on <a href="https://drboswell.gumroad.com/">Gumroad</a>.</p>
+    <p class="fine">A free tool from Boswell Consulting Agency. If your numbers need a deeper look, Dr. Boswell reviews problems like these free. You only pay if you want the fix built for you.</p>
   </footer>
 </div>
 
@@ -414,7 +409,7 @@ var TRACK_META = {
   cert: {
     label: "Medicare-certified home health",
     basis: "How your score is built: questions 1 to 4 only (star rating, readmission rate, patient satisfaction, OASIS timeliness). Questions 5 to 8 (turnover, start-of-care delay, documentation lag, referral source) shape your recommendations. They do not change your score.",
-    scope: "A note on scope: the score above uses Medicare-certified home health measures (CMS star rating, HHCAHPS satisfaction, OASIS timeliness, hospital readmissions). Some linked toolkits are written for non-medical home care instead (private-pay clients, caregiver teams). Each toolkit link states its scope, so you know which world the full fix is written for.",
+    scope: "A note on scope: the score above uses Medicare-certified home health measures (CMS star rating, HHCAHPS satisfaction, OASIS timeliness, hospital readmissions). ",
     how: "How this works: the 0 to 100 risk score uses only questions 1 to 4 (star rating, readmission rate, patient satisfaction, OASIS timeliness). Questions 5 to 8 (turnover, start-of-care delay, documentation lag, referral source) shape your recommendations and never change the score. The weights are a working model based on the professional judgment of Dr. Devon Boswell of Boswell Consulting Agency. This tool does not draw on his doctoral research. It is not a CMS-validated instrument, and it is not clinical, legal, or financial advice. See Methodology and Sources below.",
     basisLine: "Score basis: questions 1-4 only (star rating, readmission rate, satisfaction, OASIS). Questions 5-8 shape recommendations, not the score.",
     title: "Home Health Agency Self-Audit: my results"
@@ -422,7 +417,7 @@ var TRACK_META = {
   nm: {
     label: "Non-medical home care",
     basis: "How your score is built: questions 1 to 4 only (caregiver turnover, unfilled shifts, EVV and documentation exceptions, delivered hours). Questions 5 to 8 (speed to first visit, supervisory visits, care plan reviews, referral source) shape your recommendations. They do not change your score.",
-    scope: "A note on scope: the score above uses non-medical home care operating measures (caregiver turnover, unfilled shifts, EVV and documentation exceptions, delivered hours). Some linked toolkits are written for Medicare-certified home health instead. Each toolkit link states its scope, so you know which world the full fix is written for.",
+    scope: "A note on scope: the score above uses non-medical home care operating measures (caregiver turnover, unfilled shifts, EVV and documentation exceptions, delivered hours). ",
     how: "How this works: the 0 to 100 risk score uses only questions 1 to 4 (caregiver turnover, unfilled shifts, EVV and documentation exceptions, delivered hours). Questions 5 to 8 (speed to first visit, supervisory visits, care plan reviews, referral source) shape your recommendations and never change the score. The weights are a working model based on the professional judgment of Dr. Devon Boswell of Boswell Consulting Agency. This tool does not draw on his doctoral research. It is not a validated instrument, and it is not clinical, legal, or financial advice. See Methodology and Sources below.",
     basisLine: "Score basis: questions 1-4 only (turnover, unfilled shifts, EVV exceptions, delivered hours). Questions 5-8 shape recommendations, not the score.",
     title: "Home Care Agency Self-Audit: my results"
@@ -564,22 +559,6 @@ function renderResults() {
     var pEl = document.createElement("p");
     pEl.textContent = rec.text;
     el.appendChild(pEl);
-    if (rec.kit && KITS[rec.kit]) {
-      var k = KITS[rec.kit];
-      var a = document.createElement("a");
-      a.className = "kit";
-      a.href = k.url;
-      a.target = "_blank";
-      a.rel = "noopener";
-      var s1 = document.createElement("strong"); s1.textContent = "Fix this with: " + k.name + " ";
-      var s2 = document.createElement("span"); s2.className = "price"; s2.textContent = k.price;
-      var br = document.createElement("br");
-      var s3 = document.createElement("span"); s3.textContent = k.blurb;
-      var br2 = document.createElement("br");
-      var s4 = document.createElement("span"); s4.className = "fine"; s4.textContent = k.scope;
-      a.appendChild(s1); a.appendChild(s2); a.appendChild(br); a.appendChild(s3); a.appendChild(br2); a.appendChild(s4);
-      el.appendChild(a);
-    }
     r.appendChild(el);
   });
 
