@@ -137,10 +137,11 @@ check("documentation recommendation no longer prescribes a 24-hour rule", functi
   assert.ok(doc[0].text.indexOf("24-hour documentation rule") === -1);
   assert.ok(doc[0].text.indexOf("your agency's own policy") !== -1);
 });
-check("kits all carry a scope label", function () {
-  Object.keys(audit.KITS).forEach(function (k) {
-    assert.ok(audit.KITS[k].scope && audit.KITS[k].scope.length > 10, k + " missing scope");
-  });
+check("no priced products are pitched anywhere in the tool", function () {
+  assert.strictEqual(audit.KITS, undefined);
+  assert.ok(html.indexOf("gumroad") === -1, "store link left in page");
+  assert.ok(html.indexOf("Operations Audit Toolkit") === -1, "toolkit pitch left in page");
+  assert.ok(jsSrc.indexOf("gumroad") === -1, "store link left in audit.js");
 });
 
 /* --- Static page checks --- */
