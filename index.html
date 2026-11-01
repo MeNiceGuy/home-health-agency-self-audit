@@ -99,37 +99,37 @@
   <form class="card" id="audit-form" onsubmit="return runAudit(event)">
     <div class="q">
       <label for="star_rating">1. Your CMS Quality of Patient Care star rating</label>
-      <div class="help">1 to 5. If you do not know it, leave the default of 3.</div>
+      <div class="help">1 to 5. If you do not know it, leave the default of 3. Find yours free on Care Compare at medicare.gov by searching your agency name.</div>
       <input id="star_rating" type="number" min="1" max="5" step="0.5" value="3">
     </div>
     <div class="q">
       <label for="readmission_rate">2. Hospital readmission rate (percent)</label>
-      <div class="help">Of your patients discharged home, what percent are readmitted to a hospital within 30 days?</div>
+      <div class="help">Of your patients discharged home, what percent are readmitted to a hospital within 30 days? Find it on your Care Compare profile or in your EMR quality reports.</div>
       <input id="readmission_rate" type="number" min="0" max="100" step="0.5" value="15">
     </div>
     <div class="q">
       <label for="patient_satisfaction">3. Patient satisfaction score (percent)</label>
-      <div class="help">Your HHCAHPS summary or internal survey score, as a percent.</div>
+      <div class="help">Your HHCAHPS summary or internal survey score, as a percent. Your survey vendor sends you this score, and it is also published on Care Compare.</div>
       <input id="patient_satisfaction" type="number" min="0" max="100" step="1" value="85">
     </div>
     <div class="q">
       <label for="oasis_timeliness">4. OASIS documentation on-time rate (percent)</label>
-      <div class="help">What percent of OASIS assessments are completed and transmitted on time?</div>
+      <div class="help">What percent of OASIS assessments are completed and transmitted on time? Your iQIES submission reports or your EMR transmission log show this rate.</div>
       <input id="oasis_timeliness" type="number" min="0" max="100" step="1" value="90">
     </div>
     <div class="q">
       <label for="turnover_rate">5. Annual caregiver turnover rate (percent)</label>
-      <div class="help">Caregivers who left in the last 12 months divided by your average caregiver headcount. This does not affect your numeric score. It tailors your recommendations.</div>
+      <div class="help">Caregivers who left in the last 12 months divided by your average caregiver headcount. Your scheduling software caregiver report or your payroll count gives you this. This does not affect your numeric score. It tailors your recommendations.</div>
       <input id="turnover_rate" type="number" min="0" max="200" step="1" value="30">
     </div>
     <div class="q">
       <label for="soc_delay_days">6. Average days from referral to start of care</label>
-      <div class="help">How many days pass between receiving a referral and the first visit? This does not affect your numeric score. It tailors your recommendations.</div>
+      <div class="help">How many days pass between receiving a referral and the first visit? Your intake log or scheduling software shows the average. This does not affect your numeric score. It tailors your recommendations.</div>
       <input id="soc_delay_days" type="number" min="0" max="60" step="0.5" value="2">
     </div>
     <div class="q">
       <label for="documentation_lag_hours">7. Average hours from visit to finished documentation</label>
-      <div class="help">How long after a visit until the note is complete and signed? This does not affect your numeric score. It tailors your recommendations.</div>
+      <div class="help">How long after a visit until the note is complete and signed? Your EMR documentation timeliness report shows this. This does not affect your numeric score. It tailors your recommendations.</div>
       <input id="documentation_lag_hours" type="number" min="0" max="720" step="1" value="24">
     </div>
     <div class="q">
@@ -151,27 +151,27 @@
   <form class="card" id="audit-form-nm" style="display:none" onsubmit="return runAuditNM(event)">
     <div class="q">
       <label for="nm_turnover_rate">1. Annual caregiver turnover rate (percent)</label>
-      <div class="help">Caregivers who left in the last 12 months divided by your average caregiver headcount.</div>
+      <div class="help">Caregivers who left in the last 12 months divided by your average caregiver headcount. Your scheduling software caregiver report or your payroll count gives you this.</div>
       <input id="nm_turnover_rate" type="number" min="0" max="200" step="1" value="40">
     </div>
     <div class="q">
       <label for="nm_unfilled_rate">2. Shifts that went unfilled in the last 30 days (percent)</label>
-      <div class="help">Scheduled shifts with no caregiver on them, out of all scheduled shifts.</div>
+      <div class="help">Scheduled shifts with no caregiver on them, out of all scheduled shifts. Your scheduling software missed or unfilled visit report shows this.</div>
       <input id="nm_unfilled_rate" type="number" min="0" max="100" step="0.5" value="5">
     </div>
     <div class="q">
       <label for="nm_evv_rate">3. Visits with an EVV or documentation exception in the last 30 days (percent)</label>
-      <div class="help">Missed or late clock-ins, missing location capture, or notes finished late, out of all visits.</div>
+      <div class="help">Missed or late clock-ins, missing location capture, or notes finished late, out of all visits. Your EVV dashboard, inside your software or your state aggregator such as HHAeXchange or Sandata, lists these exceptions.</div>
       <input id="nm_evv_rate" type="number" min="0" max="100" step="0.5" value="8">
     </div>
     <div class="q">
       <label for="nm_utilization_rate">4. Authorized or scheduled hours actually delivered in the last 30 days (percent)</label>
-      <div class="help">Hours your caregivers actually worked, out of the hours clients were authorized or scheduled for.</div>
+      <div class="help">Hours your caregivers actually worked, out of the hours clients were authorized or scheduled for. Compare authorized hours to delivered hours in your software reports or your billing totals.</div>
       <input id="nm_utilization_rate" type="number" min="0" max="100" step="1" value="90">
     </div>
     <div class="q">
       <label for="nm_soc_delay_days">5. Average days from new client inquiry to first visit</label>
-      <div class="help">How many days pass between a new client saying yes and the first caregiver visit? This does not affect your numeric score. It tailors your recommendations.</div>
+      <div class="help">How many days pass between a new client saying yes and the first caregiver visit? Your intake log or scheduling software shows the average. This does not affect your numeric score. It tailors your recommendations.</div>
       <input id="nm_soc_delay_days" type="number" min="0" max="60" step="0.5" value="2">
     </div>
     <div class="q">
