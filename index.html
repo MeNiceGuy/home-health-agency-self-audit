@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Home Health Agency Self-Audit - Free Operational Health Check</title>
-<meta name="description" content="A free 2-minute self-audit for home health agency owners. Answer 8 questions, get a risk score and plain-language fixes. Runs entirely in your browser.">
+<title>Agency Self-Audit for Home Health and Home Care Owners - Free Operational Health Check</title>
+<meta name="description" content="A free 2-minute self-audit for home health and home care agency owners. Pick your track, answer 8 questions, get a risk score and plain-language fixes.">
 <style>
   :root { --ink: #1a2332; --muted: #5b6b80; --accent: #0f766e; --warn: #b45309; --bad: #b91c1c; --good: #15803d; --bg: #f6f8fa; --card: #ffffff; }
   * { box-sizing: border-box; }
@@ -48,11 +48,23 @@
   .email-capture #email-error { display: none; color: #b91c1c; margin-top: 6px; }
   .email-capture .email-btn { margin-top: 12px; }
   #copy-confirm { display: none; align-self: center; color: var(--accent); font-weight: 700; }
+  .track-pick { display: flex; gap: 12px; flex-wrap: wrap; }
+  .track-opt { flex: 1 1 240px; border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px 16px; cursor: pointer; background: #fff; }
+  .track-opt input { margin-right: 8px; }
+  .track-opt strong { display: block; margin-bottom: 2px; }
+  .track-opt span { font-size: 0.88rem; color: var(--muted); }
+  .track-opt.sel { border-color: var(--accent); background: #f0fdfa; }
+  #capture { display: none; }
+  .cap-field { margin-bottom: 14px; }
+  .cap-field label { display: block; font-weight: 600; margin-bottom: 4px; }
+  .cap-field input, .cap-field select { width: 100%; max-width: 340px; padding: 10px 12px; font-size: 1rem; border: 1px solid #cbd5e1; border-radius: 8px; }
+  #capture-error { display: none; color: #b91c1c; margin-top: 10px; }
+  #sent-note { display: none; border: 1px solid #99e5d8; background: #f0fdfa; border-radius: 8px; padding: 10px 12px; margin-bottom: 14px; }
   footer { text-align: center; margin-top: 36px; }
   footer a { color: var(--accent); }
   .actions { display: flex; gap: 12px; flex-wrap: wrap; margin: 18px 0; }
   @media print {
-    header.top .actions, .actions, form.card, .noprint { display: none !important; }
+    header.top .actions, .actions, form.card, .noprint, #capture, #track-card { display: none !important; }
     #results { display: block !important; }
     body { background: #fff; }
     .wrap { max-width: 100%; padding: 0; }
@@ -63,9 +75,26 @@
 <div class="wrap">
 
   <header class="top">
-    <h1>Home Health Agency Self-Audit</h1>
-    <p>Answer 8 questions about your agency. Get a risk score from 0 to 100, your three biggest problem areas, and plain-language fixes. Free, takes about 2 minutes. Everything runs in your browser: nothing you enter is uploaded or stored. The only thing that ever leaves your browser is the optional email signup below, which goes to Substack.</p>
+    <h1>Home Health and Home Care Agency Self-Audit</h1>
+    <p>Answer 8 questions about your agency and get a risk score from 0 to 100, your three biggest problem areas, and plain-language fixes. There are two tracks, one for Medicare-certified home health and one for non-medical home care, so the questions fit your world. Free, takes about 2 minutes. Your answers are scored right on this page. To see your score, you share your name, email, state, and agency type, and your answers and score are sent to Boswell Consulting Agency so Dr. Boswell can see where owners are struggling and follow up with help.</p>
   </header>
+
+  <section class="card noprint" id="track-card">
+    <h2 style="margin-top:0">Which kind of agency do you run?</h2>
+    <div class="track-pick" role="radiogroup" aria-label="Agency track">
+      <label class="track-opt sel" id="opt-cert">
+        <input type="radio" name="track" value="cert" checked>
+        <strong>Medicare-certified home health</strong>
+        <span>Skilled nursing and therapy under Medicare. Scored on star rating, readmissions, satisfaction, and OASIS timeliness.</span>
+      </label>
+      <label class="track-opt" id="opt-nm">
+        <input type="radio" name="track" value="nm">
+        <strong>Non-medical home care</strong>
+        <span>Personal care, companionship, and private pay or waiver services. Scored on caregiver turnover, unfilled shifts, EVV exceptions, and hours actually delivered.</span>
+      </label>
+    </div>
+    <p class="fine" style="margin-bottom:0">Run both kinds? Pick the side you want to check today. You can run the other track right after.</p>
+  </section>
 
   <form class="card" id="audit-form" onsubmit="return runAudit(event)">
     <div class="q">
@@ -119,8 +148,157 @@
     </div>
   </form>
 
+  <form class="card" id="audit-form-nm" style="display:none" onsubmit="return runAuditNM(event)">
+    <div class="q">
+      <label for="nm_turnover_rate">1. Annual caregiver turnover rate (percent)</label>
+      <div class="help">Caregivers who left in the last 12 months divided by your average caregiver headcount.</div>
+      <input id="nm_turnover_rate" type="number" min="0" max="200" step="1" value="40">
+    </div>
+    <div class="q">
+      <label for="nm_unfilled_rate">2. Shifts that went unfilled in the last 30 days (percent)</label>
+      <div class="help">Scheduled shifts with no caregiver on them, out of all scheduled shifts.</div>
+      <input id="nm_unfilled_rate" type="number" min="0" max="100" step="0.5" value="5">
+    </div>
+    <div class="q">
+      <label for="nm_evv_rate">3. Visits with an EVV or documentation exception in the last 30 days (percent)</label>
+      <div class="help">Missed or late clock-ins, missing location capture, or notes finished late, out of all visits.</div>
+      <input id="nm_evv_rate" type="number" min="0" max="100" step="0.5" value="8">
+    </div>
+    <div class="q">
+      <label for="nm_utilization_rate">4. Authorized or scheduled hours actually delivered in the last 30 days (percent)</label>
+      <div class="help">Hours your caregivers actually worked, out of the hours clients were authorized or scheduled for.</div>
+      <input id="nm_utilization_rate" type="number" min="0" max="100" step="1" value="90">
+    </div>
+    <div class="q">
+      <label for="nm_soc_delay_days">5. Average days from new client inquiry to first visit</label>
+      <div class="help">How many days pass between a new client saying yes and the first caregiver visit? This does not affect your numeric score. It tailors your recommendations.</div>
+      <input id="nm_soc_delay_days" type="number" min="0" max="60" step="0.5" value="2">
+    </div>
+    <div class="q">
+      <label for="nm_supervisory">6. Do supervisory visits happen on schedule for every active client?</label>
+      <div class="help">This does not affect your numeric score. It tailors your recommendations.</div>
+      <select id="nm_supervisory">
+        <option value="yes">Yes, on a set schedule</option>
+        <option value="sometimes">Sometimes, they slip</option>
+        <option value="rarely">Rarely or never</option>
+      </select>
+    </div>
+    <div class="q">
+      <label for="nm_careplan">7. Are client care plans reviewed and updated at least every 90 days?</label>
+      <div class="help">This does not affect your numeric score. It tailors your recommendations.</div>
+      <select id="nm_careplan">
+        <option value="yes">Yes, every plan is current</option>
+        <option value="sometimes">Some are behind</option>
+        <option value="no">No regular review</option>
+      </select>
+    </div>
+    <div class="q">
+      <label for="nm_referral_source">8. Where do most of your new clients come from?</label>
+      <div class="help">This one does not affect your score. It tailors your recommendations.</div>
+      <select id="nm_referral_source">
+        <option value="hospital">Hospital and facility referrals</option>
+        <option value="word">Word of mouth</option>
+        <option value="online">Online search and ads</option>
+        <option value="few">We get few new clients</option>
+      </select>
+    </div>
+    <div class="actions">
+      <button class="primary" type="submit">Get my score</button>
+      <button class="ghost" type="button" onclick="loadSampleNM()">Load sample agency</button>
+    </div>
+  </form>
+
+  <section class="card" id="capture" aria-live="polite">
+    <h2 style="margin-top:0">Your score is ready</h2>
+    <p>One short step and your score, your three biggest problem areas, and the fixes show right here on this page. Your name, email, state, agency type, answers, and score are emailed to Boswell Consulting Agency. That is how Dr. Boswell sees where owners are struggling and follows up with help. Your information is never sold.</p>
+    <form id="capture-form" novalidate>
+      <div class="cap-field">
+        <label for="cap-name">Your name</label>
+        <input id="cap-name" type="text" autocomplete="name" placeholder="First and last name">
+      </div>
+      <div class="cap-field">
+        <label for="cap-email">Email address</label>
+        <input id="cap-email" type="email" autocomplete="email" placeholder="you@example.com">
+      </div>
+      <div class="cap-field">
+        <label for="cap-state">State your agency operates in</label>
+        <select id="cap-state">
+          <option value="">Pick your state</option>
+          <option value="Alabama">Alabama</option>
+          <option value="Alaska">Alaska</option>
+          <option value="Arizona">Arizona</option>
+          <option value="Arkansas">Arkansas</option>
+          <option value="California">California</option>
+          <option value="Colorado">Colorado</option>
+          <option value="Connecticut">Connecticut</option>
+          <option value="Delaware">Delaware</option>
+          <option value="District of Columbia">District of Columbia</option>
+          <option value="Florida">Florida</option>
+          <option value="Georgia">Georgia</option>
+          <option value="Hawaii">Hawaii</option>
+          <option value="Idaho">Idaho</option>
+          <option value="Illinois">Illinois</option>
+          <option value="Indiana">Indiana</option>
+          <option value="Iowa">Iowa</option>
+          <option value="Kansas">Kansas</option>
+          <option value="Kentucky">Kentucky</option>
+          <option value="Louisiana">Louisiana</option>
+          <option value="Maine">Maine</option>
+          <option value="Maryland">Maryland</option>
+          <option value="Massachusetts">Massachusetts</option>
+          <option value="Michigan">Michigan</option>
+          <option value="Minnesota">Minnesota</option>
+          <option value="Mississippi">Mississippi</option>
+          <option value="Missouri">Missouri</option>
+          <option value="Montana">Montana</option>
+          <option value="Nebraska">Nebraska</option>
+          <option value="Nevada">Nevada</option>
+          <option value="New Hampshire">New Hampshire</option>
+          <option value="New Jersey">New Jersey</option>
+          <option value="New Mexico">New Mexico</option>
+          <option value="New York">New York</option>
+          <option value="North Carolina">North Carolina</option>
+          <option value="North Dakota">North Dakota</option>
+          <option value="Ohio">Ohio</option>
+          <option value="Oklahoma">Oklahoma</option>
+          <option value="Oregon">Oregon</option>
+          <option value="Pennsylvania">Pennsylvania</option>
+          <option value="Rhode Island">Rhode Island</option>
+          <option value="South Carolina">South Carolina</option>
+          <option value="South Dakota">South Dakota</option>
+          <option value="Tennessee">Tennessee</option>
+          <option value="Texas">Texas</option>
+          <option value="Utah">Utah</option>
+          <option value="Vermont">Vermont</option>
+          <option value="Virginia">Virginia</option>
+          <option value="Washington">Washington</option>
+          <option value="West Virginia">West Virginia</option>
+          <option value="Wisconsin">Wisconsin</option>
+          <option value="Wyoming">Wyoming</option>
+          <option value="Not launched yet">Not launched yet</option>
+        </select>
+      </div>
+      <div class="cap-field">
+        <label for="cap-type">Agency type</label>
+        <select id="cap-type">
+          <option value="Medicare-certified home health">Medicare-certified home health</option>
+          <option value="Non-medical home care">Non-medical home care</option>
+          <option value="Both certified and non-medical">Both certified and non-medical</option>
+          <option value="Other health care">Other health care</option>
+          <option value="Not launched yet">Not launched yet</option>
+        </select>
+      </div>
+      <input type="text" id="cap-honey" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+      <div class="actions">
+        <button class="primary" type="submit" id="cap-submit">Show my score</button>
+      </div>
+      <div id="capture-error" role="alert"></div>
+    </form>
+  </section>
+
   <section class="card" id="results" aria-live="polite">
     <h2 style="margin-top:0">Your results</h2>
+    <div id="sent-note">Your answers and score were sent to Boswell Consulting Agency. If your numbers need a deeper look, Dr. Boswell reviews problems like these free. You only pay if you want the fix built for you.</div>
     <div class="score-band">
       <svg class="dial" viewBox="0 0 148 148" role="img" aria-label="Risk score dial">
         <circle cx="74" cy="74" r="64" fill="none" stroke="#e2e8f0" stroke-width="14"/>
@@ -132,7 +310,7 @@
       <div>
         <div style="margin-bottom:8px"><span class="tier" id="tier-badge">Low</span></div>
         <div id="summary-line" style="max-width:420px"></div>
-        <p class="fine" style="margin-top:8px">How your score is built: questions 1 to 4 only (star rating, readmission rate, patient satisfaction, OASIS timeliness). Questions 5 to 8 (turnover, start-of-care delay, documentation lag, referral source) shape your recommendations. They do not change your score.</p>
+        <p class="fine" style="margin-top:8px" id="score-basis"></p>
       </div>
     </div>
 
@@ -140,37 +318,28 @@
     <div id="drivers"></div>
 
     <h3>Recommended actions</h3>
-    <p class="fine">A note on scope: the score above uses Medicare-certified home health measures (CMS star rating, HHCAHPS satisfaction, OASIS timeliness, hospital readmissions). Some linked toolkits are written for non-medical home care instead (private-pay clients, caregiver teams). Each toolkit link states its scope, so you know which world the full fix is written for.</p>
+    <p class="fine" id="scope-note"></p>
     <div id="recs"></div>
 
-    <div class="email-capture noprint">
-      <h3>Want your results by email?</h3>
-      <p class="fine">Optional. Entering an email below takes you to Substack to subscribe, and Substack handles the signup there. This tool does not send or store your email address.</p>
-      <form id="email-form" novalidate>
-        <label for="results-email">Email address</label>
-        <input id="results-email" type="email" autocomplete="email" placeholder="you@example.com">
-        <div class="fine" id="email-error" role="alert">That does not look like an email address. Please check it and try again.</div>
-        <div class="email-btn"><button class="primary" type="submit">Email me my results</button></div>
-      </form>
-    </div>
+    <p class="fine">Want more free breakdowns like this one? Dr. Boswell writes a free newsletter for agency owners on Substack: <a href="https://drboswell.substack.com/subscribe" target="_blank" rel="noopener">subscribe on Substack</a>.</p>
 
     <div class="actions noprint">
       <button class="ghost" onclick="window.print()">Print or save as PDF</button>
       <button class="ghost" type="button" id="copy-results-btn">Copy my results</button>
       <span class="fine" id="copy-confirm" role="status">Copied</span>
-      <button class="ghost" onclick="document.getElementById('audit-form').scrollIntoView({behavior:'smooth'})">Run it again</button>
+      <button class="ghost" onclick="document.getElementById('track-card').scrollIntoView({behavior:'smooth'})">Run it again</button>
     </div>
 
-    <p class="fine">How this works: the 0 to 100 risk score uses only questions 1 to 4 (star rating, readmission rate, patient satisfaction, OASIS timeliness). Questions 5 to 8 (turnover, start-of-care delay, documentation lag, referral source) shape your recommendations and never change the score. The weights are a working model based on the professional judgment of Dr. Devon Boswell of Boswell Consulting Group. This tool does not draw on his doctoral research. It is not a CMS-validated instrument, and it is not clinical, legal, or financial advice. See Methodology and Sources below.</p>
+    <p class="fine" id="how-works"></p>
 
-    <p class="fine"><strong>Privacy:</strong> everything runs in your browser. Your answers are never uploaded, stored, or shared. There is no backend, no account, and no tracking. The only exception is the optional "Want your results by email?" box above: if you enter an address, this tool opens Substack in a new tab so you can subscribe there. Substack handles the signup; this tool does not send, store, or see your email address.</p>
+    <p class="fine"><strong>Privacy:</strong> your answers are scored right on this page, and nothing leaves this page until you submit the short form to see your score. When you submit it, your name, email, state, agency type, answers, and score are emailed to Boswell Consulting Agency so Dr. Boswell can see where owners are struggling and follow up with help. Your information is never sold, and there is no account and no tracking on this page.</p>
   </section>
 
   <section class="card meth" id="methodology" aria-label="Methodology and sources">
     <h2 style="margin-top:0">Methodology and Sources</h2>
 
     <h3>What the score measures</h3>
-    <p>The score is a working risk model, 0 to 100, higher is worse. It answers one question: how much operational risk do your agency's own numbers suggest, based on four Medicare-certified home health quality measures?</p>
+    <p>The score is a working risk model, 0 to 100, higher is worse. For the Medicare-certified track, it answers one question: how much operational risk do your agency's own numbers suggest, based on four Medicare-certified home health quality measures?</p>
     <table>
       <tr><th>Input</th><th>Weight</th><th>How it scores</th></tr>
       <tr><td>CMS Quality of Patient Care star rating</td><td>15 pts</td><td>Each star below 5 adds 15 points</td></tr>
@@ -179,6 +348,17 @@
       <tr><td>OASIS documentation on-time rate (percent)</td><td>1.1 pts</td><td>Each point below 100 adds 1.1 points</td></tr>
     </table>
     <p class="fine">The points are added, rounded to a whole number, and capped at 100. Risk bands: under 50 is Low, 50 to 74 is Moderate, 75 and up is High.</p>
+
+    <h3>The non-medical home care track</h3>
+    <p>The non-medical score answers the same question for personal care agencies, using the four operating numbers that drive risk in that world:</p>
+    <table>
+      <tr><th>Input</th><th>Weight</th><th>How it scores</th></tr>
+      <tr><td>Caregiver turnover rate (percent)</td><td>0.4 pts</td><td>Each percentage point adds 0.4 points</td></tr>
+      <tr><td>Unfilled shifts (percent)</td><td>1.5 pts</td><td>Each percentage point adds 1.5 points</td></tr>
+      <tr><td>EVV or documentation exceptions (percent)</td><td>1.2 pts</td><td>Each percentage point adds 1.2 points</td></tr>
+      <tr><td>Authorized hours not delivered (percent)</td><td>0.7 pts</td><td>Each point below 100 percent delivered adds 0.7 points</td></tr>
+    </table>
+    <p class="fine">Same bands: under 50 is Low, 50 to 74 is Moderate, 75 and up is High. Speed to first visit, supervisory visits, care plan reviews, and referral source (questions 5 to 8) never change the numeric score. They only decide which recommendations you see, and their thresholds are working assumptions, not validated cutoffs.</p>
 
     <h3>What does not affect the score</h3>
     <p>Turnover, start-of-care delay, documentation lag, and referral source (questions 5 to 8) never change the numeric score. They only decide which recommendations you see. The flag thresholds are working assumptions, not validated cutoffs:</p>
@@ -202,7 +382,7 @@
     <h3>Limits</h3>
     <ul>
       <li>All inputs are self-reported. The tool cannot verify them.</li>
-      <li>The weights and thresholds reflect the author's professional judgment from years running Boswell Consulting Group and working inside home health operations. They are not validated research, and this tool does not draw on the author's doctoral research.</li>
+      <li>The weights and thresholds reflect the author's professional judgment from years running Boswell Consulting Agency and working inside home health operations. They are not validated research, and this tool does not draw on the author's doctoral research.</li>
       <li>Not a CMS-validated instrument. Not clinical, legal, or financial advice.</li>
       <li>Correlation is not causation: a high score means your numbers look risky, not that any specific outcome will happen.</li>
     </ul>
@@ -211,21 +391,55 @@
     <ul>
       <li>Federal rules require OASIS assessments to be transmitted within 30 days of the assessment (42 CFR 484.45).</li>
       <li>CMS publishes Quality of Patient Care Star Ratings for home health agencies on Care Compare.</li>
+      <li>For Medicaid-funded personal care services, federal law requires electronic visit verification that captures the type of service, the individual receiving it, the date of service, the location, the individual providing the service, and the start and end times (Section 12006 of the 21st Century Cures Act, 42 USC 1396b(l)).</li>
       <li>Everything else on this page, including every weight, threshold, and interpretation, is the author's professional judgment. No national benchmarks, no CMS datasets, and no third-party studies are used.</li>
     </ul>
   </section>
 
   <footer>
     <p><strong>Want the full fix, not just the score?</strong> The Operations Audit Toolkit ($39) is the Excel workbook plus playbook that walks you through a complete operational audit, step by step: <a href="https://drboswell.gumroad.com/l/operations-audit-toolkit">get the Operations Audit Toolkit</a>.</p>
-    <p class="fine">Free tool by <a href="https://drboswell.gumroad.com/">Boswell Consulting Group</a>. More operational toolkits for home care agencies on <a href="https://drboswell.gumroad.com/">Gumroad</a>.</p>
+    <p class="fine">Free tool by <a href="https://drboswell.gumroad.com/">Boswell Consulting Agency</a>. More operational toolkits for home care agencies on <a href="https://drboswell.gumroad.com/">Gumroad</a>.</p>
   </footer>
 </div>
 
 <script src="audit.js"></script>
 <script>
-// Holds the latest computed results so the copy button can reuse them.
+// State for the two tracks and the capture step.
 var lastRisk = null;
 var lastRecs = [];
+var lastTrack = "cert";
+var lastInputs = null;
+
+var TRACK_META = {
+  cert: {
+    label: "Medicare-certified home health",
+    basis: "How your score is built: questions 1 to 4 only (star rating, readmission rate, patient satisfaction, OASIS timeliness). Questions 5 to 8 (turnover, start-of-care delay, documentation lag, referral source) shape your recommendations. They do not change your score.",
+    scope: "A note on scope: the score above uses Medicare-certified home health measures (CMS star rating, HHCAHPS satisfaction, OASIS timeliness, hospital readmissions). Some linked toolkits are written for non-medical home care instead (private-pay clients, caregiver teams). Each toolkit link states its scope, so you know which world the full fix is written for.",
+    how: "How this works: the 0 to 100 risk score uses only questions 1 to 4 (star rating, readmission rate, patient satisfaction, OASIS timeliness). Questions 5 to 8 (turnover, start-of-care delay, documentation lag, referral source) shape your recommendations and never change the score. The weights are a working model based on the professional judgment of Dr. Devon Boswell of Boswell Consulting Agency. This tool does not draw on his doctoral research. It is not a CMS-validated instrument, and it is not clinical, legal, or financial advice. See Methodology and Sources below.",
+    basisLine: "Score basis: questions 1-4 only (star rating, readmission rate, satisfaction, OASIS). Questions 5-8 shape recommendations, not the score.",
+    title: "Home Health Agency Self-Audit: my results"
+  },
+  nm: {
+    label: "Non-medical home care",
+    basis: "How your score is built: questions 1 to 4 only (caregiver turnover, unfilled shifts, EVV and documentation exceptions, delivered hours). Questions 5 to 8 (speed to first visit, supervisory visits, care plan reviews, referral source) shape your recommendations. They do not change your score.",
+    scope: "A note on scope: the score above uses non-medical home care operating measures (caregiver turnover, unfilled shifts, EVV and documentation exceptions, delivered hours). Some linked toolkits are written for Medicare-certified home health instead. Each toolkit link states its scope, so you know which world the full fix is written for.",
+    how: "How this works: the 0 to 100 risk score uses only questions 1 to 4 (caregiver turnover, unfilled shifts, EVV and documentation exceptions, delivered hours). Questions 5 to 8 (speed to first visit, supervisory visits, care plan reviews, referral source) shape your recommendations and never change the score. The weights are a working model based on the professional judgment of Dr. Devon Boswell of Boswell Consulting Agency. This tool does not draw on his doctoral research. It is not a validated instrument, and it is not clinical, legal, or financial advice. See Methodology and Sources below.",
+    basisLine: "Score basis: questions 1-4 only (turnover, unfilled shifts, EVV exceptions, delivered hours). Questions 5-8 shape recommendations, not the score.",
+    title: "Home Care Agency Self-Audit: my results"
+  }
+};
+
+function selectTrack(track) {
+  document.getElementById("audit-form").style.display = track === "cert" ? "block" : "none";
+  document.getElementById("audit-form-nm").style.display = track === "nm" ? "block" : "none";
+  document.getElementById("opt-cert").className = "track-opt" + (track === "cert" ? " sel" : "");
+  document.getElementById("opt-nm").className = "track-opt" + (track === "nm" ? " sel" : "");
+  var typeSel = document.getElementById("cap-type");
+  if (typeSel) typeSel.value = track === "cert" ? "Medicare-certified home health" : "Non-medical home care";
+}
+document.querySelectorAll('input[name="track"]').forEach(function (r) {
+  r.addEventListener("change", function () { selectTrack(r.value); });
+});
 
 function readInputs() {
   return {
@@ -239,6 +453,18 @@ function readInputs() {
     referral_source: document.getElementById("referral_source").value
   };
 }
+function readInputsNM() {
+  return {
+    nm_turnover_rate: document.getElementById("nm_turnover_rate").value,
+    nm_unfilled_rate: document.getElementById("nm_unfilled_rate").value,
+    nm_evv_rate: document.getElementById("nm_evv_rate").value,
+    nm_utilization_rate: document.getElementById("nm_utilization_rate").value,
+    nm_soc_delay_days: document.getElementById("nm_soc_delay_days").value,
+    nm_supervisory: document.getElementById("nm_supervisory").value,
+    nm_careplan: document.getElementById("nm_careplan").value,
+    nm_referral_source: document.getElementById("nm_referral_source").value
+  };
+}
 function loadSample() {
   var s = SAMPLE_AGENCY;
   document.getElementById("star_rating").value = s.star_rating;
@@ -250,7 +476,35 @@ function loadSample() {
   document.getElementById("documentation_lag_hours").value = s.documentation_lag_hours;
   document.getElementById("referral_source").value = s.referral_source;
   runAudit(null);
-  document.getElementById("results").scrollIntoView({ behavior: "smooth" });
+}
+function loadSampleNM() {
+  var s = SAMPLE_AGENCY_NM;
+  document.getElementById("nm_turnover_rate").value = s.nm_turnover_rate;
+  document.getElementById("nm_unfilled_rate").value = s.nm_unfilled_rate;
+  document.getElementById("nm_evv_rate").value = s.nm_evv_rate;
+  document.getElementById("nm_utilization_rate").value = s.nm_utilization_rate;
+  document.getElementById("nm_soc_delay_days").value = s.nm_soc_delay_days;
+  document.getElementById("nm_supervisory").value = s.nm_supervisory;
+  document.getElementById("nm_careplan").value = s.nm_careplan;
+  document.getElementById("nm_referral_source").value = s.nm_referral_source;
+  runAuditNM(null);
+}
+
+// Compute and stash results, then ask for the short capture form.
+function stageResults(track, inputs, risk, recs) {
+  lastTrack = track;
+  lastInputs = inputs;
+  lastRisk = risk;
+  lastRecs = recs;
+  document.getElementById("results").style.display = "none";
+  document.getElementById("sent-note").style.display = "none";
+  var cap = document.getElementById("capture");
+  cap.style.display = "block";
+  var btn = document.getElementById("cap-submit");
+  btn.disabled = false;
+  btn.textContent = "Show my score";
+  document.getElementById("capture-error").style.display = "none";
+  cap.scrollIntoView({ behavior: "smooth" });
 }
 function runAudit(e) {
   if (e) e.preventDefault();
@@ -258,8 +512,23 @@ function runAudit(e) {
   var risk = computeRiskModel(p);
   var flags = operationalFlags(p);
   var recs = generateRecommendations(p, risk, flags);
-  lastRisk = risk;
-  lastRecs = recs;
+  stageResults("cert", p, risk, recs);
+  return false;
+}
+function runAuditNM(e) {
+  if (e) e.preventDefault();
+  var p = readInputsNM();
+  var risk = computeRiskModelNM(p);
+  var flags = operationalFlagsNM(p);
+  var recs = generateRecommendationsNM(p, risk, flags);
+  stageResults("nm", p, risk, recs);
+  return false;
+}
+
+function renderResults() {
+  var risk = lastRisk;
+  var recs = lastRecs;
+  var meta = TRACK_META[lastTrack];
   document.getElementById("copy-confirm").style.display = "none";
 
   var C = 2 * Math.PI * 64;
@@ -271,6 +540,10 @@ function runAudit(e) {
   badge.textContent = risk.risk_tier + " risk";
   badge.className = "tier " + risk.risk_tier;
   document.getElementById("summary-line").textContent = buildSummary(risk, recs);
+  document.getElementById("score-basis").textContent = meta.basis;
+  document.getElementById("scope-note").textContent = meta.scope;
+  document.getElementById("how-works").textContent = meta.how;
+  document.getElementById("sent-note").style.display = "block";
 
   var d = document.getElementById("drivers");
   d.innerHTML = "";
@@ -313,17 +586,18 @@ function runAudit(e) {
   var res = document.getElementById("results");
   res.style.display = "block";
   res.scrollIntoView({ behavior: "smooth" });
-  return false;
 }
 
 // Builds a plain-text summary of the latest results.
 function resultsText() {
+  var meta = TRACK_META[lastTrack];
   var lines = [];
-  lines.push("Home Health Agency Self-Audit: my results");
+  lines.push(meta.title);
+  lines.push("Track: " + meta.label);
   lines.push("");
   lines.push("Risk score: " + lastRisk.risk_score + " out of 100");
   lines.push("Risk tier: " + lastRisk.risk_tier + " risk");
-  lines.push("Score basis: questions 1-4 only (star rating, readmission rate, satisfaction, OASIS). Questions 5-8 shape recommendations, not the score.");
+  lines.push(meta.basisLine);
   lines.push("");
   lines.push("Top 3 drivers:");
   lastRisk.drivers.slice(0, 3).forEach(function (drv, i) {
@@ -369,23 +643,90 @@ function copyResults() {
 }
 document.getElementById("copy-results-btn").addEventListener("click", copyResults);
 
-// Optional email capture: validate the address, then hand off to Substack in a new tab.
+// Capture step: validate, send the lead and results to Boswell Consulting
+// Agency by email, then reveal the score on success.
 function validEmail(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
-document.getElementById("email-form").addEventListener("submit", function (e) {
-  e.preventDefault();
-  var input = document.getElementById("results-email");
-  var err = document.getElementById("email-error");
-  if (!validEmail(input.value.trim())) {
-    err.style.display = "block";
-    input.setAttribute("aria-invalid", "true");
-    input.focus();
-    return;
+function answerPairs() {
+  if (lastTrack === "cert") {
+    return [
+      ["CMS star rating", lastInputs.star_rating],
+      ["Readmission rate percent", lastInputs.readmission_rate],
+      ["Patient satisfaction percent", lastInputs.patient_satisfaction],
+      ["OASIS on-time percent", lastInputs.oasis_timeliness],
+      ["Caregiver turnover percent", lastInputs.turnover_rate],
+      ["Days referral to start of care", lastInputs.soc_delay_days],
+      ["Hours visit to finished documentation", lastInputs.documentation_lag_hours],
+      ["Main referral source", lastInputs.referral_source]
+    ];
   }
+  return [
+    ["Caregiver turnover percent", lastInputs.nm_turnover_rate],
+    ["Unfilled shifts percent", lastInputs.nm_unfilled_rate],
+    ["EVV or documentation exceptions percent", lastInputs.nm_evv_rate],
+    ["Authorized hours delivered percent", lastInputs.nm_utilization_rate],
+    ["Days inquiry to first visit", lastInputs.nm_soc_delay_days],
+    ["Supervisory visits on schedule", lastInputs.nm_supervisory],
+    ["Care plans reviewed every 90 days", lastInputs.nm_careplan],
+    ["Main referral source", lastInputs.nm_referral_source]
+  ];
+}
+document.getElementById("capture-form").addEventListener("submit", function (e) {
+  e.preventDefault();
+  var err = document.getElementById("capture-error");
+  function fail(msg) { err.textContent = msg; err.style.display = "block"; }
+  if (!lastRisk) { fail("Run the audit first. Your score will be ready right after."); return; }
+  if (document.getElementById("cap-honey").value) { return; }
+  var name = document.getElementById("cap-name").value.trim();
+  var email = document.getElementById("cap-email").value.trim();
+  var state = document.getElementById("cap-state").value;
+  var type = document.getElementById("cap-type").value;
+  if (name.length < 2) { fail("Please add your name so the follow-up is personal."); document.getElementById("cap-name").focus(); return; }
+  if (!validEmail(email)) { fail("That does not look like an email address. Please check it and try again."); document.getElementById("cap-email").focus(); return; }
+  if (!state) { fail("Please pick your state, or Not launched yet if you are pre-launch."); document.getElementById("cap-state").focus(); return; }
   err.style.display = "none";
-  input.removeAttribute("aria-invalid");
-  window.open("https://drboswell.substack.com/subscribe", "_blank", "noopener");
+  var btn = document.getElementById("cap-submit");
+  btn.disabled = true;
+  btn.textContent = "Sending...";
+  var top = lastRisk.drivers.slice(0, 3).map(function (d) { return d.label + " (+" + Math.round(d.points) + " pts)"; });
+  var payload = {
+    _subject: "Self-audit result: " + name + " - " + TRACK_META[lastTrack].label + " - score " + lastRisk.risk_score + " (" + lastRisk.risk_tier + ")",
+    _template: "table",
+    _captcha: "false",
+    name: name,
+    email: email,
+    state: state,
+    agency_type: type,
+    track: TRACK_META[lastTrack].label,
+    risk_score: lastRisk.risk_score,
+    risk_band: lastRisk.risk_tier,
+    top_problem_1: top[0] || "",
+    top_problem_2: top[1] || "",
+    top_problem_3: top[2] || "",
+    full_results: resultsText()
+  };
+  answerPairs().forEach(function (pair, i) { payload["answer_" + (i + 1) + " " + pair[0]] = pair[1]; });
+  fetch("https://formsubmit.co/ajax/DrBoswell@boswellconsultingagency.com", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Accept": "application/json" },
+    body: JSON.stringify(payload)
+  }).then(function (res) {
+    return res.json().catch(function () { return {}; });
+  }).then(function (data) {
+    if (data && (data.success === "true" || data.success === true)) {
+      document.getElementById("capture").style.display = "none";
+      renderResults();
+    } else {
+      btn.disabled = false;
+      btn.textContent = "Show my score";
+      fail("The send did not go through. Check your connection and try once more. Your answers are still on this page.");
+    }
+  }).catch(function () {
+    btn.disabled = false;
+    btn.textContent = "Show my score";
+    fail("The send did not go through. Check your connection and try once more. Your answers are still on this page.");
+  });
 });
 </script>
 </body>
