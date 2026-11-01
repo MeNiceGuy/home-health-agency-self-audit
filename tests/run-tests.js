@@ -171,18 +171,38 @@ check("Medicare-certified vs home care scope is labeled in the page", function (
   assert.ok(html.indexOf("Medicare-certified home health measures") !== -1);
   assert.ok(html.indexOf("non-medical home care") !== -1);
 });
-check("email capture block is intact and working-shape", function () {
-  assert.ok(html.indexOf('id="email-form"') !== -1);
-  assert.ok(html.indexOf('id="results-email"') !== -1);
-  assert.ok(html.indexOf('id="email-error"') !== -1);
-  assert.ok(html.indexOf("Want your results by email?") !== -1);
-  assert.ok(html.indexOf("https://drboswell.substack.com/subscribe") !== -1);
+check("results capture form is intact and working-shape", function () {
+  assert.ok(html.indexOf('id="capture-form"') !== -1);
+  assert.ok(html.indexOf('id="cap-name"') !== -1);
+  assert.ok(html.indexOf('id="cap-email"') !== -1);
+  assert.ok(html.indexOf('id="cap-state"') !== -1);
+  assert.ok(html.indexOf('id="cap-type"') !== -1);
+  assert.ok(html.indexOf("Your score is ready") !== -1);
+  assert.ok(html.indexOf("https://formsubmit.co/ajax/DrBoswell@boswellconsultingagency.com") !== -1);
   assert.ok(html.indexOf("validEmail") !== -1);
 });
 check("privacy language is explicit in the page", function () {
-  assert.ok(html.indexOf("The only exception is the optional") !== -1 ||
-            html.indexOf("The only thing that ever leaves your browser is the optional email signup") !== -1);
-  assert.ok(html.indexOf("does not send, store, or see your email address") !== -1);
+  assert.ok(html.indexOf("nothing leaves this page until you submit the short form") !== -1);
+  assert.ok(html.indexOf("are emailed to Boswell Consulting Agency") !== -1);
+  assert.ok(html.indexOf("Your information is never sold") !== -1);
+});
+check("both tracks are present in the page", function () {
+  assert.ok(html.indexOf('id="audit-form-nm"') !== -1);
+  assert.ok(html.indexOf("Non-medical home care") !== -1);
+  assert.ok(html.indexOf("The non-medical home care track") !== -1);
+});
+check("non-medical model: sample agency scores 77 High", function () {
+  var r = audit.computeRiskModelNM(audit.SAMPLE_AGENCY_NM);
+  assert.strictEqual(r.risk_score, 77);
+  assert.strictEqual(r.risk_tier, "High");
+});
+check("non-medical model: tailoring questions never change the score", function () {
+  var base = { nm_turnover_rate: 40, nm_unfilled_rate: 5, nm_evv_rate: 8, nm_utilization_rate: 90,
+    nm_soc_delay_days: 2, nm_supervisory: "yes", nm_careplan: "yes", nm_referral_source: "online" };
+  var alt = { nm_turnover_rate: 40, nm_unfilled_rate: 5, nm_evv_rate: 8, nm_utilization_rate: 90,
+    nm_soc_delay_days: 9, nm_supervisory: "rarely", nm_careplan: "no", nm_referral_source: "few" };
+  assert.strictEqual(audit.computeRiskModelNM(base).risk_score,
+                     audit.computeRiskModelNM(alt).risk_score);
 });
 check("README carries methodology, sources, and the professional-observation framing", function () {
   assert.ok(readme.indexOf("## Methodology and Sources") !== -1);
