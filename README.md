@@ -41,7 +41,7 @@ Questions 5 to 8 (turnover, start-of-care delay, documentation lag, referral sou
 
 **What the score does and does not mean.** It gives a structured read on your own numbers and flags the biggest drivers. It does not benchmark you against other agencies, predict revenue or reimbursement, diagnose compliance problems, or replace an operational audit. Correlation is not causation.
 
-**Medicare-certified measures vs. home care links.** The four scored inputs are Medicare-certified home health measures (CMS star ratings, HHCAHPS satisfaction, OASIS). Two of the linked toolkits, the Caregiver Pay and Retention Playbook and the Private-Pay Client Playbook, are written for non-medical home care (caregiver teams and private-pay clients). Each link states its scope so the two worlds are never confused.
+**Two tracks, two sets of measures.** The four scored inputs on the certified track are Medicare-certified home health measures (CMS star ratings, HHCAHPS satisfaction, OASIS). The non-medical track scores caregiver turnover, unfilled shifts, EVV and documentation exceptions, and delivered hours. Each track states its scope so the two worlds are never confused.
 
 **Limits.** All inputs are self-reported. The model is not validated research. Not clinical, legal, or financial advice.
 
@@ -81,13 +81,9 @@ The tests exercise the scoring math at its boundaries, confirm the non-scored qu
 - `SCOPE.md` - the original build scope
 - `video/` - demo videos and the articles that announced the tool
 
-## The paid toolkits behind the recommendations
+## Going deeper
 
-Each recommendation links to the matching paid toolkit on Gumroad, where the full fix lives:
-
-- [Operations Audit Toolkit](https://drboswell.gumroad.com/l/operations-audit-toolkit) ($49) - the full step-by-step operational audit
-- [Caregiver Pay & Retention Playbook](https://drboswell.gumroad.com/l/caregiver-pay-retention-playbook) ($29) - pay benchmarking and first-90-days retention
-- [Private-Pay Client Playbook](https://drboswell.gumroad.com/l/private-pay-client-playbook) ($39) - referral pipeline and private-pay growth
+The tool itself is the free offer: an owner answers eight questions, leaves a name and email, and gets a score with recommended actions. Nothing is sold on the page. The follow-up happens by email: Dr. Boswell reviews problems like these free, and clients pay only for the fix or deliverable.
 
 ## License
 
