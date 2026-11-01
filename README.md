@@ -85,7 +85,7 @@ The tests exercise the scoring math at its boundaries, confirm the non-scored qu
 
 Each recommendation links to the matching paid toolkit on Gumroad, where the full fix lives:
 
-- [Operations Audit Toolkit](https://drboswell.gumroad.com/l/operations-audit-toolkit) ($39) - the full step-by-step operational audit
+- [Operations Audit Toolkit](https://drboswell.gumroad.com/l/operations-audit-toolkit) ($49) - the full step-by-step operational audit
 - [Caregiver Pay & Retention Playbook](https://drboswell.gumroad.com/l/caregiver-pay-retention-playbook) ($29) - pay benchmarking and first-90-days retention
 - [Private-Pay Client Playbook](https://drboswell.gumroad.com/l/private-pay-client-playbook) ($39) - referral pipeline and private-pay growth
 
