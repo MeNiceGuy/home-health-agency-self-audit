@@ -707,7 +707,7 @@ document.getElementById("capture-form").addEventListener("submit", function (e) 
     full_results: resultsText()
   };
   answerPairs().forEach(function (pair, i) { payload["answer_" + (i + 1) + " " + pair[0]] = pair[1]; });
-  fetch("https://formsubmit.co/ajax/DrBoswell@boswellconsultingagency.com", {
+  fetch("https://formsubmit.co/ajax/359af7a0ec42d917c26fedc684ecd01c", {
     method: "POST",
     headers: { "Content-Type": "application/json", "Accept": "application/json" },
     body: JSON.stringify(payload)
