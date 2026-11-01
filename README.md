@@ -1,8 +1,8 @@
 # Home Health Agency Self-Audit
 
-A free, open-source operational health check for home health agency owners. Answer 8 questions, get a risk score from 0 to 100, your three biggest problem areas, and plain-language recommended actions.
+A free, open-source operational health check for home health and home care agency owners. Two tracks, one for Medicare-certified home health and one for non-medical home care. Answer 8 questions, get a risk score from 0 to 100, your three biggest problem areas, and plain-language recommended actions.
 
-**Live demo:** enable GitHub Pages on this repo (Settings > Pages > Deploy from branch > main) and it runs at `https://<username>.github.io/home-health-agency-self-audit/`.
+**Live tool:** https://meniceguy.github.io/home-health-agency-self-audit/
 
 ## Watch the demo
 
@@ -27,9 +27,11 @@ In the author's professional observation, most agencies find out they have an op
 
 Score bands: under 50 is Low risk, 50 to 74 is Moderate, 75 and up is High.
 
+**The non-medical home care track** scores four different inputs: caregiver turnover (0.4 pts per point), unfilled shifts (1.5 pts per point), EVV or documentation exceptions (1.2 pts per point), and authorized hours not delivered (0.7 pts per point below 100 percent delivered). Same 0 to 100 scale and the same bands. Its last four questions (speed to first visit, supervisory visits, care plan reviews, referral source) shape recommendations only, the same way questions 5 to 8 work on the certified track.
+
 Questions 5 to 8 (turnover, start-of-care delay, documentation lag, referral source) trigger targeted recommendations only. Their thresholds are working assumptions, not validated cutoffs: turnover above 25 percent, start-of-care delay over 2 days, documentation lag over 24 hours, OASIS timeliness below 92 percent, readmission rate above 14 percent, satisfaction below 90 percent.
 
-**Honest note:** the weights and thresholds are a working model based on the professional judgment of Dr. Devon Boswell of Boswell Consulting Group. This tool does not draw on his doctoral research. This is not a CMS-validated instrument, and it is not clinical, legal, or financial advice. See Methodology and Sources below.
+**Honest note:** the weights and thresholds are a working model based on the professional judgment of Dr. Devon Boswell of Boswell Consulting Agency. This tool does not draw on his doctoral research. This is not a CMS-validated instrument, and it is not clinical, legal, or financial advice. See Methodology and Sources below.
 
 ## Methodology and Sources
 
@@ -50,7 +52,7 @@ Questions 5 to 8 (turnover, start-of-care delay, documentation lag, referral sou
 
 ## Privacy
 
-Everything runs in the browser. Your answers are never uploaded, stored, or shared. There is no backend, no account, and no tracking. The one exception: the optional "Want your results by email?" box opens Substack in a new tab so you can subscribe there. Substack handles the signup; this tool does not send, store, or see your email address.
+Scoring runs in the browser, and nothing leaves the page until the visitor submits the short results form to see their score. On submit, the visitor's name, email, state, agency type, answers, and score are emailed to Boswell Consulting Agency (through the FormSubmit relay) so Dr. Boswell can see where owners are struggling and follow up with help. There is no account and no tracking on the page, and visitor information is never sold.
 
 ## Run it locally
 
@@ -89,4 +91,4 @@ Each recommendation links to the matching paid toolkit on Gumroad, where the ful
 
 ## License
 
-MIT. See [LICENSE](LICENSE). Copyright (c) 2026 Devon Boswell / Boswell Consulting Group. Use it, fork it, adapt it. Attribution appreciated but not required.
+MIT. See [LICENSE](LICENSE). Copyright (c) 2026 Devon Boswell / Boswell Consulting Agency. Use it, fork it, adapt it. Attribution appreciated but not required.
