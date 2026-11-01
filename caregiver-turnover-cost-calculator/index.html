@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Caregiver Turnover Cost Calculator | Boswell Consulting Agency</title>
+<meta name="description" content="Free calculator for home care agency owners: what caregiver turnover actually costs your agency per year, priced from your own numbers.">
+<style>
+  :root {
+    --ink: #17242e;
+    --mute: #5a6b76;
+    --accent: #0e7a5f;
+    --accent-dk: #0a5e49;
+    --bg: #f4f7f5;
+    --card: #ffffff;
+    --border: #dbe4e0;
+    --red: #b91c1c;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Georgia, "Times New Roman", serif; background: var(--bg); color: var(--ink); line-height: 1.55; }
+  .wrap { max-width: 820px; margin: 0 auto; padding: 24px 18px 60px; }
+  header { text-align: center; padding: 26px 0 6px; }
+  h1 { font-size: 2rem; margin: 0 0 8px; }
+  .sub { color: var(--mute); font-size: 1.05rem; margin: 0 auto; max-width: 640px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 22px; margin: 18px 0; }
+  h2 { font-size: 1.3rem; margin: 4px 0 12px; }
+  h3 { font-size: 1.08rem; margin: 18px 0 6px; }
+  label { display: block; font-weight: bold; margin: 16px 0 4px; }
+  .help { color: var(--mute); font-size: 0.92rem; margin: 2px 0 6px; }
+  input[type="number"], input[type="text"], input[type="email"], select {
+    width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; font-family: inherit; background: #fbfcfb;
+  }
+  button { background: var(--accent); color: #fff; border: 0; border-radius: 10px; padding: 13px 22px; font-size: 1.05rem; font-weight: bold; cursor: pointer; width: 100%; margin-top: 18px; }
+  button:hover { background: var(--accent-dk); }
+  .fine { color: var(--mute); font-size: 0.9rem; }
+  .big { font-size: 3rem; font-weight: bold; text-align: center; margin: 6px 0 0; }
+  .mid { text-align: center; color: var(--mute); margin: 0 0 8px; }
+  .rows { margin: 14px 0; }
+  .row { display: flex; justify-content: space-between; gap: 14px; padding: 9px 0; border-bottom: 1px solid var(--border); }
+  .row:last-child { border-bottom: 0; }
+  .row .amt { font-weight: bold; white-space: nowrap; }
+  .err { color: var(--red); font-weight: bold; display: none; margin-top: 10px; }
+  #results { display: none; }
+  .hp { position: absolute; left: -9999px; top: -9999px; }
+  a { color: var(--accent-dk); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Caregiver Turnover Cost Calculator</h1>
+    <p class="sub">Turnover is the most expensive line in a home care agency, and most owners have never seen it priced. Put in your own numbers and see what churn cost you this year.</p>
+  </header>
+
+  <div class="card">
+    <h2>How this works</h2>
+    <p>Answer ten questions about your agency. Nothing leaves this page while you type. When you are ready, a short form asks for your name and email, your numbers are sent to Boswell Consulting Agency, and your full cost breakdown unlocks on the spot: what turnover cost you this year, what each departure costs, and how your rate compares to the industry.</p>
+    <p class="fine">The sample figures loaded below are one sample agency. Replace them with yours.</p>
+  </div>
+
+  <div class="card">
+    <h2>Your numbers</h2>
+
+    <label for="caregivers">Caregivers on staff</label>
+    <p class="help">Where to find this: your payroll count or scheduling roster. If the count swings by season, use the average month.</p>
+    <input type="number" id="caregivers" min="0" step="1" value="20">
+
+    <label for="leftLastYear">Caregivers who left in the last 12 months</label>
+    <p class="help">Where to find this: your payroll records or personnel files. Count resignations and terminations both.</p>
+    <input type="number" id="leftLastYear" min="0" step="1" value="11">
+
+    <label for="wage">Average caregiver pay, per hour ($)</label>
+    <p class="help">Where to find this: your payroll summary. Use the average across your team if pay varies.</p>
+    <input type="number" id="wage" min="0" step="0.25" value="15">
+
+    <label for="billRate">Average amount clients pay you, per hour ($)</label>
+    <p class="help">Where to find this: your rate sheet or billing summary. Use your average across payers if you bill more than one.</p>
+    <input type="number" id="billRate" min="0" step="0.25" value="30">
+
+    <label for="weeklyHours">Average hours per caregiver, per week</label>
+    <p class="help">Where to find this: your scheduling software hours report, total hours divided by caregiver count.</p>
+    <input type="number" id="weeklyHours" min="0" step="1" value="30">
+
+    <label for="vacancyWeeks">Weeks a departed caregiver's hours sit uncovered</label>
+    <p class="help">Where to find this: from a caregiver's last shift to the replacement's first shift, in your scheduling history. Count the weeks the hours went unfilled, not the weeks until a hire signed.</p>
+    <input type="number" id="vacancyWeeks" min="0" step="0.5" value="3">
+
+    <label for="trainingHours">Paid orientation and training hours per new hire</label>
+    <p class="help">Where to find this: your orientation schedule and the new hire's first pay stub.</p>
+    <input type="number" id="trainingHours" min="0" step="1" value="12">
+
+    <label for="recruitCost">Recruiting and screening cost per hire ($)</label>
+    <p class="help">Where to find this: job ads, background check, drug screen, and testing for one hire, added up. The figure loaded here is an editable estimate, not a standard. Replace it with what you actually spend.</p>
+    <input type="number" id="recruitCost" min="0" step="10" value="250">
+
+    <label for="adminHours">Your time per hire, in hours</label>
+    <p class="help">Where to find this: count the hours spent interviewing, on paperwork, credential checks, and schedule rebuilding for one hire. Your time or your administrator's, whoever does it.</p>
+    <input type="number" id="adminHours" min="0" step="0.5" value="6">
+
+    <label for="adminPay">What that time is worth, per hour ($)</label>
+    <p class="help">Where to find this: the hourly pay of the person doing the hiring work, or your own hourly value if that is you.</p>
+    <input type="number" id="adminPay" min="0" step="1" value="22">
+  </div>
+
+  <div class="card" id="gate">
+    <h2>Your cost is ready</h2>
+    <p>Enter your name and email and your full breakdown unlocks here: the yearly cost, the cost of each departure, and how your turnover rate compares to the industry average. Your numbers are sent to Boswell Consulting Agency so Dr. Boswell can see where agencies are losing money. Your information is never sold.</p>
+    <form id="captureForm" novalidate>
+      <label for="fName">Full name</label>
+      <input type="text" id="fName" autocomplete="name" required>
+      <label for="fEmail">Email address</label>
+      <input type="email" id="fEmail" autocomplete="email" required>
+      <label for="fState">State</label>
+      <select id="fState" required>
+        <option value="">Choose your state</option>
+        <option>Alabama</option><option>Alaska</option><option>Arizona</option><option>Arkansas</option><option>California</option><option>Colorado</option><option>Connecticut</option><option>Delaware</option><option>District of Columbia</option><option>Florida</option><option>Georgia</option><option>Hawaii</option><option>Idaho</option><option>Illinois</option><option>Indiana</option><option>Iowa</option><option>Kansas</option><option>Kentucky</option><option>Louisiana</option><option>Maine</option><option>Maryland</option><option>Massachusetts</option><option>Michigan</option><option>Minnesota</option><option>Mississippi</option><option>Missouri</option><option>Montana</option><option>Nebraska</option><option>Nevada</option><option>New Hampshire</option><option>New Jersey</option><option>New Mexico</option><option>New York</option><option>North Carolina</option><option>North Dakota</option><option>Ohio</option><option>Oklahoma</option><option>Oregon</option><option>Pennsylvania</option><option>Rhode Island</option><option>South Carolina</option><option>South Dakota</option><option>Tennessee</option><option>Texas</option><option>Utah</option><option>Vermont</option><option>Virginia</option><option>Washington</option><option>West Virginia</option><option>Wisconsin</option><option>Wyoming</option><option>Not launched yet</option>
+      </select>
+      <label for="fType">Agency type</label>
+      <select id="fType" required>
+        <option value="">Choose your agency type</option>
+        <option>Medicare-certified home health</option>
+        <option>Non-medical home care</option>
+        <option>Both</option>
+        <option>Other health care</option>
+        <option>Not launched yet</option>
+      </select>
+      <input type="text" id="fHoney" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <button type="submit" id="sendBtn">Show my turnover cost</button>
+      <p class="err" id="sendErr">That did not go through. Check your connection and press the button again. Your answers are still on this page.</p>
+    </form>
+  </div>
+
+  <div class="card" id="results">
+    <h2>What turnover cost your agency</h2>
+    <p class="big" id="rAnnual"></p>
+    <p class="mid">per year, priced from your numbers</p>
+    <div class="rows">
+      <div class="row"><span>Cost per month</span><span class="amt" id="rMonthly"></span></div>
+      <div class="row"><span>Cost of each departure</span><span class="amt" id="rPerLeaver"></span></div>
+      <div class="row"><span>Your turnover rate</span><span class="amt" id="rRate"></span></div>
+      <div class="row"><span>Industry average turnover</span><span class="amt">75%</span></div>
+      <div class="row"><span>Share of everything you bill</span><span class="amt" id="rShare"></span></div>
+    </div>
+    <h3>Where the money goes, per departure</h3>
+    <div class="rows">
+      <div class="row"><span>Recruiting and screening</span><span class="amt" id="rRecruit"></span></div>
+      <div class="row"><span>Orientation and training pay</span><span class="amt" id="rTraining"></span></div>
+      <div class="row"><span>Your time on the hire</span><span class="amt" id="rAdmin"></span></div>
+      <div class="row"><span>Margin lost while the hours sit uncovered</span><span class="amt" id="rLost"></span></div>
+    </div>
+    <p id="rVerdict"></p>
+    <h3>What moves this number</h3>
+    <p>First, find out where your caregivers leave. Track departures by how long the caregiver had been with you. If most exits land in the first 90 days, the fix is the structure of those 90 days: a named trainer, a check-in at week one, thirty, sixty, and ninety, and a schedule that does not change without warning.</p>
+    <p>Second, shorten the uncovered weeks. A small bench of on-call caregivers who already cleared your screening costs little to hold and cuts the margin you lose every time someone walks.</p>
+    <p>Third, recheck this number quarterly. Turnover cost compounds quietly, and the quarter you catch it early is the cheapest one to fix.</p>
+    <p class="fine" id="sentNote"></p>
+  </div>
+
+  <div class="card">
+    <h2>Methodology and sources</h2>
+    <p>The calculator prices three things for every departure: what you spend to replace the caregiver (recruiting and screening, paid orientation and training hours, and the hiring time of you or your administrator), and the margin on the hours that sit uncovered while the seat is empty (weeks uncovered, times weekly hours, times your bill rate minus caregiver pay). Multiply by the number of caregivers who left and you have the year.</p>
+    <p>Every figure in the math is yours except one: the industry comparison. Caregiver turnover averaged 75 percent in 2024, per Activated Insights benchmarking of home care agencies. The cost structure itself, which costs count and how they are added, is Dr. Boswell's professional judgment from consulting work with agency owners, and is labeled that way on purpose. Change any input and the result changes with it; there are no hidden charges or loaded fees in the model.</p>
+    <p class="fine">This is an educational estimate built from your own numbers, not financial advice. Your information is never sold. This tool is run by Boswell Consulting Agency, the consulting practice of Dr. Devon Boswell, DBA.</p>
+  </div>
+
+  <p class="fine" style="text-align:center">A free tool from Boswell Consulting Agency. If your turnover cost needs a deeper look, Dr. Boswell reviews problems like these free. You only pay if you want the fix built for you.</p>
+</div>
+
+<script src="calc.js"></script>
+<script>
+(function () {
+  var ENDPOINT = "https://formsubmit.co/ajax/359af7a0ec42d917c26fedc684ecd01c";
+
+  function val(id) { return document.getElementById(id).value; }
+  function money(n) {
+    return "$" + Math.round(n).toLocaleString("en-US");
+  }
+  function gather() {
+    return {
+      caregivers: val("caregivers"), leftLastYear: val("leftLastYear"),
+      wage: val("wage"), billRate: val("billRate"), weeklyHours: val("weeklyHours"),
+      vacancyWeeks: val("vacancyWeeks"), trainingHours: val("trainingHours"),
+      recruitCost: val("recruitCost"), adminHours: val("adminHours"), adminPay: val("adminPay")
+    };
+  }
+  function render(r, input) {
+    document.getElementById("rAnnual").textContent = money(r.annual);
+    document.getElementById("rMonthly").textContent = money(r.monthly);
+    document.getElementById("rPerLeaver").textContent = money(r.perLeaver);
+    document.getElementById("rRate").textContent = Math.round(r.turnoverRate) + "%";
+    document.getElementById("rShare").textContent = r.sharePct.toFixed(1) + "%";
+    document.getElementById("rRecruit").textContent = money(parseFloat(input.recruitCost) || 0);
+    document.getElementById("rTraining").textContent = money(r.trainingCost);
+    document.getElementById("rAdmin").textContent = money(r.adminCost);
+    document.getElementById("rLost").textContent = money(r.lostMarginPerLeaver);
+    document.getElementById("rVerdict").textContent = r.verdict;
+  }
+  function resultsText(r, input) {
+    var lines = [];
+    lines.push("Caregiver Turnover Cost Calculator result");
+    lines.push("Turnover rate: " + Math.round(r.turnoverRate) + "% (industry average 75%, Activated Insights 2024)");
+    lines.push("Annual turnover cost: " + money(r.annual));
+    lines.push("Monthly cost: " + money(r.monthly));
+    lines.push("Cost per departure: " + money(r.perLeaver));
+    lines.push("Share of annual billings: " + r.sharePct.toFixed(1) + "%");
+    lines.push("Per departure: recruiting/screening " + money(parseFloat(input.recruitCost) || 0) +
+      ", training pay " + money(r.trainingCost) + ", admin time " + money(r.adminCost) +
+      ", lost margin while uncovered " + money(r.lostMarginPerLeaver));
+    lines.push("Verdict: " + r.verdict);
+    lines.push("Inputs: caregivers " + input.caregivers + ", left last year " + input.leftLastYear +
+      ", wage $" + input.wage + ", bill rate $" + input.billRate + ", weekly hours " + input.weeklyHours +
+      ", vacancy weeks " + input.vacancyWeeks + ", training hours " + input.trainingHours +
+      ", recruiting cost $" + input.recruitCost + ", admin hours " + input.adminHours + ", admin pay $" + input.adminPay);
+    return lines.join("\n");
+  }
+
+  document.getElementById("captureForm").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var err = document.getElementById("sendErr");
+    err.style.display = "none";
+    if (val("fHoney")) { return; }
+    var name = val("fName").trim(), email = val("fEmail").trim();
+    var state = val("fState"), type = val("fType");
+    if (!name || !email || !state || !type || email.indexOf("@") < 1) {
+      err.textContent = "Please add your name, a valid email, your state, and your agency type, then press the button again.";
+      err.style.display = "block";
+      return;
+    }
+    var input = gather();
+    var r = computeTurnoverCost(input);
+    var btn = document.getElementById("sendBtn");
+    btn.disabled = true;
+    btn.textContent = "Sending...";
+    var payload = {
+      _subject: "Turnover cost result: " + name + " - " + money(r.annual) + " per year - rate " + Math.round(r.turnoverRate) + "%",
+      _template: "table",
+      name: name, email: email, state: state, agency_type: type,
+      turnover_rate_pct: Math.round(r.turnoverRate),
+      annual_cost: money(r.annual), monthly_cost: money(r.monthly),
+      cost_per_departure: money(r.perLeaver),
+      share_of_billings_pct: r.sharePct.toFixed(1),
+      caregivers: input.caregivers, left_last_year: input.leftLastYear,
+      results: resultsText(r, input)
+    };
+    fetch(ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify(payload)
+    }).then(function (resp) {
+      if (!resp.ok) { throw new Error("send failed"); }
+      render(r, input);
+      document.getElementById("sentNote").textContent = "Your numbers were sent to Boswell Consulting Agency. If your turnover cost needs a deeper look, Dr. Boswell reviews problems like these free. You only pay if you want the fix built for you.";
+      document.getElementById("gate").style.display = "none";
+      var res = document.getElementById("results");
+      res.style.display = "block";
+      res.scrollIntoView({ behavior: "smooth", block: "start" });
+    }).catch(function () {
+      btn.disabled = false;
+      btn.textContent = "Show my turnover cost";
+      err.textContent = "That did not go through. Check your connection and press the button again. Your answers are still on this page.";
+      err.style.display = "block";
+    });
+  });
+})();
+</script>
+</body>
+</html>
