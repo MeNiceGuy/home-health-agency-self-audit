@@ -17,7 +17,7 @@
 var KITS = {
   audit: {
     name: "Operations Audit Toolkit",
-    price: "$39",
+    price: "$49",
     url: "https://drboswell.gumroad.com/l/operations-audit-toolkit",
     blurb: "Excel workbook plus playbook that walks you through a full operational audit, step by step.",
     scope: "Written for Medicare-certified home health and non-medical home care agencies."
