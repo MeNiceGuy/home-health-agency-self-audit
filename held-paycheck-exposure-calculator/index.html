@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Held-Paycheck Exposure Calculator | Boswell Consulting Agency</title>
+<meta name="description" content="Free calculator for home care agency owners: what one held or late paycheck can actually cost under federal wage law and your state wage payment law, with the statutes cited on the page.">
+<style>
+  :root {
+    --ink: #17242e;
+    --mute: #5a6b76;
+    --accent: #0e7a5f;
+    --accent-dk: #0a5e49;
+    --bg: #f4f7f5;
+    --card: #ffffff;
+    --border: #dbe4e0;
+    --red: #b91c1c;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Georgia, "Times New Roman", serif; background: var(--bg); color: var(--ink); line-height: 1.55; }
+  .wrap { max-width: 820px; margin: 0 auto; padding: 24px 18px 60px; }
+  header { text-align: center; padding: 26px 0 6px; }
+  h1 { font-size: 2rem; margin: 0 0 8px; }
+  .sub { color: var(--mute); font-size: 1.05rem; margin: 0 auto; max-width: 640px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 22px; margin: 18px 0; }
+  h2 { font-size: 1.3rem; margin: 4px 0 12px; }
+  h3 { font-size: 1.08rem; margin: 18px 0 6px; }
+  label { display: block; font-weight: bold; margin: 16px 0 4px; }
+  .help { color: var(--mute); font-size: 0.92rem; margin: 2px 0 6px; }
+  input[type="number"], input[type="text"], input[type="email"], select {
+    width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; font-family: inherit; background: #fbfcfb;
+  }
+  button { background: var(--accent); color: #fff; border: 0; border-radius: 10px; padding: 13px 22px; font-size: 1.05rem; font-weight: bold; cursor: pointer; width: 100%; margin-top: 18px; }
+  button:hover { background: var(--accent-dk); }
+  .fine { color: var(--mute); font-size: 0.9rem; }
+  .big { font-size: 3rem; font-weight: bold; text-align: center; margin: 6px 0 0; }
+  .mid { text-align: center; color: var(--mute); margin: 0 0 8px; }
+  .rows { margin: 14px 0; }
+  .row { display: flex; justify-content: space-between; gap: 14px; padding: 9px 0; border-bottom: 1px solid var(--border); }
+  .row:last-child { border-bottom: 0; }
+  .row .amt { font-weight: bold; white-space: nowrap; }
+  .err { color: var(--red); font-weight: bold; display: none; margin-top: 10px; }
+  .hp { position: absolute; left: -9999px; top: -9999px; }
+  a { color: var(--accent-dk); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Held-Paycheck Exposure Calculator</h1>
+    <p class="sub">A missing timesheet never makes a paycheck optional. Put in one real scenario from your agency and see what a held or late paycheck can cost under federal law and your state wage payment law, with every statute cited on this page.</p>
+  </header>
+
+  <div class="card">
+    <h2>How this works</h2>
+    <p>Enter the scenario below and press the button. Your exposure shows on this page right away. No email is required to see the number. If you want the detailed breakdown sent to you, there is an optional form after the result.</p>
+    <p>The math is not a guess. Federal law doubles unpaid wages as liquidated damages. South Carolina allows up to three times the wages plus a penalty for every failed payday. New York doubles the wages and adds interest. The formulas are shown with the result, and the statutes are linked in the sources at the bottom.</p>
+    <p class="fine">The sample figures loaded below are one caregiver, one held paycheck: 40 hours at $15 an hour, $600 owed. Replace them with yours.</p>
+  </div>
+
+  <div class="card">
+    <h2>The scenario</h2>
+
+    <label for="hourlyRate">Caregiver hourly pay rate ($)</label>
+    <p class="help">Where to find this: the caregiver's pay rate in your payroll system.</p>
+    <input type="number" id="hourlyRate" min="0" step="0.25" value="15">
+
+    <label for="hoursWorked">Hours worked in the unpaid period</label>
+    <p class="help">Where to find this: the schedule of record or the visit records for the pay period that was held. Hours actually worked are what count, timesheet or no timesheet.</p>
+    <input type="number" id="hoursWorked" min="0" step="0.5" value="40">
+
+    <label for="paydaysLate">Paydays the pay was late or held</label>
+    <p class="help">Where to find this: count the scheduled paydays that passed without this pay, on your payroll calendar. This drives the per-payday penalty where a state has one.</p>
+    <input type="number" id="paydaysLate" min="0" step="1" value="1">
+
+    <label for="caregiversAffected">Caregivers affected the same way</label>
+    <p class="help">Where to find this: how many caregivers had pay held or delayed under the same practice. One employee can sue for everyone in the same position, so this number multiplies the exposure.</p>
+    <input type="number" id="caregiversAffected" min="0" step="1" value="1">
+
+    <label for="lawSelect">Which law to price</label>
+    <p class="help">Federal law is the floor everywhere. Pick your state if it is listed and the calculator prices the state law on top of showing the federal floor.</p>
+    <select id="lawSelect">
+      <option value="federal">Federal law only (FLSA)</option>
+      <option value="sc" selected>South Carolina</option>
+      <option value="ny">New York</option>
+    </select>
+
+    <label for="weeksUntilFixed">Weeks until the pay is fixed</label>
+    <p class="help">Where to find this: your honest estimate of when the money actually goes out. This drives the interest estimate in New York and the added-payday projection in South Carolina.</p>
+    <input type="number" id="weeksUntilFixed" min="0" step="1" value="2">
+
+    <button type="button" id="calcBtn">See the exposure</button>
+  </div>
+
+  <div class="card" id="results">
+    <h2>What this scenario can cost</h2>
+    <p class="big" id="rTotal"></p>
+    <p class="mid" id="rTotalLabel"></p>
+    <div class="rows" id="rRows"></div>
+    <p id="rFormula"></p>
+    <p id="rNote"></p>
+    <p class="fine">Attorney fees and court costs: a court adds the employee's attorney fees and costs on top of these figures under each of these laws. They are real money and they are not estimated here, so read every total on this page as a floor, not a ceiling.</p>
+  </div>
+
+  <div class="card">
+    <h2>What most owners miss</h2>
+    <h3>One caregiver can sue for all of them</h3>
+    <p>Under 29 USC 216(b), an employee can bring a collective action for herself and every similarly situated employee who opts in. A held-paycheck practice that touches five caregivers is not five separate small problems. It is one case with five caregivers of wages, doubled or trebled, plus one attorney fee award.</p>
+    <h3>The missing timesheet is the employer's problem, not a defense</h3>
+    <p>Federal regulation 29 CFR Part 516 puts the duty to keep time records on the employer. When the records are missing, the employee's reasonable estimate of hours worked can carry the case. Pay from the schedule of record, reconcile next cycle, and handle the paperwork failure as a discipline issue. Discipline may never touch pay for hours already worked.</p>
+    <h3>A payroll reserve is protection, not law</h3>
+    <p>Keeping a reserve of at least one full payroll cycle is sound practice, and this page recommends it as practice. It is not a legal requirement under federal law or the South Carolina Payment of Wages Act, and no statute cited here sets one. The reserve exists so a billing delay or a remittance gap never becomes the reason a caregiver is paid late. Practice, not law, and labeled that way on purpose.</p>
+    <h3>A handbook rule cannot override the statute</h3>
+    <p>No policy an owner writes can outrank federal or state wage law. A handbook line that says no timesheet, no pay does not change the exposure above. It documents the violation in the owner's own handbook.</p>
+  </div>
+
+  <div class="card" id="capture">
+    <h2>Want the detailed breakdown?</h2>
+    <p>Optional. Leave your name and email and the full breakdown of this scenario will be sent to you: every figure with its formula, the reserve math, and the steps that cut this exposure before it becomes a claim. Your scenario numbers are sent to Boswell Consulting Agency with the request. Your information is never sold.</p>
+    <form id="captureForm" novalidate>
+      <label for="fName">Full name</label>
+      <input type="text" id="fName" autocomplete="name" required>
+      <label for="fEmail">Email address</label>
+      <input type="email" id="fEmail" autocomplete="email" required>
+      <label for="fState">State</label>
+      <select id="fState" required>
+        <option value="">Choose your state</option>
+        <option>Alabama</option><option>Alaska</option><option>Arizona</option><option>Arkansas</option><option>California</option><option>Colorado</option><option>Connecticut</option><option>Delaware</option><option>District of Columbia</option><option>Florida</option><option>Georgia</option><option>Hawaii</option><option>Idaho</option><option>Illinois</option><option>Indiana</option><option>Iowa</option><option>Kansas</option><option>Kentucky</option><option>Louisiana</option><option>Maine</option><option>Maryland</option><option>Massachusetts</option><option>Michigan</option><option>Minnesota</option><option>Mississippi</option><option>Missouri</option><option>Montana</option><option>Nebraska</option><option>Nevada</option><option>New Hampshire</option><option>New Jersey</option><option>New Mexico</option><option>New York</option><option>North Carolina</option><option>North Dakota</option><option>Ohio</option><option>Oklahoma</option><option>Oregon</option><option>Pennsylvania</option><option>Rhode Island</option><option>South Carolina</option><option>South Dakota</option><option>Tennessee</option><option>Texas</option><option>Utah</option><option>Vermont</option><option>Virginia</option><option>Washington</option><option>West Virginia</option><option>Wisconsin</option><option>Wyoming</option><option>Not launched yet</option>
+      </select>
+      <label for="fType">Agency type</label>
+      <select id="fType" required>
+        <option value="">Choose your agency type</option>
+        <option>Medicare-certified home health</option>
+        <option>Non-medical home care</option>
+        <option>Both</option>
+        <option>Other health care</option>
+        <option>Not launched yet</option>
+      </select>
+      <input type="text" id="fHoney" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <button type="submit" id="sendBtn">Email me the breakdown</button>
+      <p class="err" id="sendErr">That did not go through. Check your connection and press the button again. Your scenario is still on this page.</p>
+      <p class="fine" id="sentNote"></p>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>Methodology and sources</h2>
+    <p>Every figure is computed from the scenario you entered, under the law you picked. Nothing here uses industry averages. The legal multipliers, penalties, and interest rate come from the statutes below, checked on November 1, 2026. How the pieces are presented, and the practice recommendations on this page, are Dr. Boswell's professional judgment from consulting work with agency owners, labeled that way on purpose.</p>
+    <h3>Federal</h3>
+    <p><a href="https://www.law.cornell.edu/uscode/text/29/216">29 USC 216(b)</a>: an employer who violates the wage provisions is liable for the unpaid wages plus an additional equal amount as liquidated damages, plus attorney fees and costs. The same section authorizes collective actions by one or more employees for similarly situated employees. <a href="https://www.law.cornell.edu/cfr/text/29/part-516">29 CFR Part 516</a>: the employer's duty to keep records of hours worked and wages paid.</p>
+    <h3>South Carolina</h3>
+    <p><a href="https://www.scstatehouse.gov/code/t41c010.php">S.C. Code 41-10-80</a>: subsection (C) allows an employee to recover up to three times the amount of unpaid wages, plus costs and attorney's fees, with the amount within that cap set by the court. Subsection (B) sets a civil penalty of $100 for each failure to pay on a payday. The treble figure on this page is the maximum, labeled up to, never a guaranteed outcome.</p>
+    <h3>New York</h3>
+    <p><a href="https://www.nysenate.gov/legislation/laws/LAB/198">Labor Law 198(1-a)</a>: an employee who prevails recovers the underpayment plus liquidated damages of 100 percent, plus costs, attorney fees, and prejudgment interest. <a href="https://www.nysenate.gov/legislation/laws/LAB/191">Labor Law 191(1)(a)</a>: manual workers, including home care aides, must be paid weekly and not later than seven calendar days after the week in which wages were earned. <a href="https://www.nysenate.gov/legislation/laws/LAB/193">Labor Law 193</a>: no deduction from wages is permitted outside its narrow list, and a late or missing timesheet is not on it. Interest is estimated at 9 percent per year under <a href="https://www.nysenate.gov/legislation/laws/CVP/5004">CPLR 5004</a>. One honest limit: a 2025 amendment to 198(1-a) softened liquidated damages for first-time late-pay frequency cases where the wages were eventually paid in full, so a first-time frequency slip that was fully cured can price lower than this page shows.</p>
+    <p class="fine">This is an educational estimate built from your own scenario, not legal advice. If you are holding a paycheck now, pay the hours worked and talk to an employment attorney about the rest. Your information is never sold. This tool is run by Boswell Consulting Agency, the consulting practice of Dr. Devon Boswell, DBA.</p>
+  </div>
+
+  <p class="fine" style="text-align:center">A free tool from Boswell Consulting Agency. If a pay practice at your agency needs a deeper look, Dr. Boswell reviews problems like these free. You only pay if you want the fix built for you.<br>
+  More free tools: <a href="../">Home Health Agency Self-Audit</a> | <a href="../caregiver-turnover-cost-calculator/">Caregiver Turnover Cost Calculator</a></p>
+</div>
+
+<script src="calc.js"></script>
+<script>
+(function () {
+  var ENDPOINT = "https://formsubmit.co/ajax/359af7a0ec42d917c26fedc684ecd01c";
+
+  function val(id) { return document.getElementById(id).value; }
+  function money(n) {
+    return "$" + Math.round(n).toLocaleString("en-US");
+  }
+  function gather() {
+    return {
+      hourlyRate: val("hourlyRate"), hoursWorked: val("hoursWorked"),
+      paydaysLate: val("paydaysLate"), caregiversAffected: val("caregiversAffected"),
+      state: val("lawSelect"), weeksUntilFixed: val("weeksUntilFixed")
+    };
+  }
+  function row(label, amt) {
+    return '<div class="row"><span>' + label + '</span><span class="amt">' + amt + '</span></div>';
+  }
+  function render(r, input) {
+    var rows = [];
+    rows.push(row("Unpaid wages owed, one caregiver", money(r.wagesPerCaregiver)));
+    if (r.caregivers > 1) {
+      rows.push(row("Unpaid wages owed, all " + r.caregivers + " caregivers", money(r.wagesPerCaregiver * r.caregivers)));
+    }
+    if (r.state === "sc") {
+      rows.push(row("South Carolina maximum at three times the wages, one caregiver", money(r.scTreblePerCaregiver)));
+      rows.push(row("Civil penalty, $100 x " + r.paydaysLate + " failed payday(s), one caregiver", money(r.scPenaltyPerCaregiver)));
+      rows.push(row("Total per caregiver, before attorney fees", money(r.scPerCaregiver)));
+      if (r.weeksUntilFixed > 0) {
+        rows.push(row("If it stays unfixed " + r.weeksUntilFixed + " more week(s) on a weekly pay cycle, all caregivers", money(r.scDragTotal)));
+      }
+    } else if (r.state === "ny") {
+      rows.push(row("Liquidated damages at 100 percent, one caregiver", money(r.wagesPerCaregiver)));
+      rows.push(row("Estimated interest at 9 percent per year over " + r.weeksUntilFixed + " week(s), one caregiver", money(r.nyInterestPerCaregiver)));
+      rows.push(row("Total per caregiver, before attorney fees", money(r.nyPerCaregiver)));
+    } else {
+      rows.push(row("Liquidated damages, an equal amount, one caregiver", money(r.wagesPerCaregiver)));
+      rows.push(row("Total per caregiver, before attorney fees", money(r.federalPerCaregiver)));
+    }
+    if (r.state !== "federal") {
+      rows.push(row("Federal floor for the same scenario, all caregivers (29 USC 216(b))", money(r.federalTotal)));
+    }
+    document.getElementById("rRows").innerHTML = rows.join("");
+    document.getElementById("rTotal").textContent = money(r.headlineTotal);
+    document.getElementById("rTotalLabel").textContent =
+      r.state === "sc"
+        ? "maximum exposure for " + r.caregivers + " caregiver(s), before attorney fees"
+        : "exposure for " + r.caregivers + " caregiver(s), before attorney fees";
+    var f;
+    if (r.state === "sc") {
+      f = "The formula: " + money(r.wagesPerCaregiver) + " of unpaid wages x 3 = " + money(r.scTreblePerCaregiver) +
+        ", plus $100 x " + r.paydaysLate + " failed payday(s) = " + money(r.scPenaltyPerCaregiver) +
+        ", is " + money(r.scPerCaregiver) + " for one caregiver, and " + money(r.scTotal) +
+        " across " + r.caregivers + " caregiver(s).";
+    } else if (r.state === "ny") {
+      f = "The formula: " + money(r.wagesPerCaregiver) + " of unpaid wages, doubled under Labor Law 198(1-a), plus estimated interest of " +
+        money(r.nyInterestPerCaregiver) + ", is " + money(r.nyPerCaregiver) + " for one caregiver, and " + money(r.nyTotal) +
+        " across " + r.caregivers + " caregiver(s).";
+    } else {
+      f = "The formula: " + money(r.wagesPerCaregiver) + " of unpaid wages, doubled under 29 USC 216(b), is " +
+        money(r.federalPerCaregiver) + " for one caregiver, and " + money(r.federalTotal) +
+        " across " + r.caregivers + " caregiver(s).";
+    }
+    document.getElementById("rFormula").textContent = f;
+    document.getElementById("rNote").textContent = r.branchNote;
+  }
+  function calculate() {
+    var input = gather();
+    render(computeExposure(input), input);
+  }
+  document.getElementById("calcBtn").addEventListener("click", function () {
+    calculate();
+    document.getElementById("results").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+  calculate();
+
+  function resultsText(r, input) {
+    var lawName = r.state === "sc" ? "South Carolina" : (r.state === "ny" ? "New York" : "Federal only");
+    var lines = [];
+    lines.push("Held-Paycheck Exposure Calculator result (" + lawName + ")");
+    lines.push("Unpaid wages per caregiver: " + money(r.wagesPerCaregiver));
+    lines.push("Caregivers affected: " + r.caregivers);
+    lines.push("Headline exposure before attorney fees: " + money(r.headlineTotal));
+    lines.push("Per caregiver before attorney fees: " + money(r.headlinePerCaregiver));
+    lines.push("Federal floor, all caregivers: " + money(r.federalTotal));
+    if (r.state === "sc") {
+      lines.push("SC treble maximum per caregiver: " + money(r.scTreblePerCaregiver));
+      lines.push("SC penalties per caregiver: " + money(r.scPenaltyPerCaregiver));
+    }
+    if (r.state === "ny") {
+      lines.push("NY estimated interest per caregiver: " + money(r.nyInterestPerCaregiver));
+    }
+    lines.push("Note: " + r.branchNote);
+    lines.push("Inputs: rate $" + input.hourlyRate + ", hours " + input.hoursWorked +
+      ", paydays late " + input.paydaysLate + ", caregivers " + input.caregiversAffected +
+      ", law " + input.state + ", weeks until fixed " + input.weeksUntilFixed);
+    return lines.join("\n");
+  }
+
+  document.getElementById("captureForm").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var err = document.getElementById("sendErr");
+    err.style.display = "none";
+    if (val("fHoney")) { return; }
+    var name = val("fName").trim(), email = val("fEmail").trim();
+    var state = val("fState"), type = val("fType");
+    if (!name || !email || !state || !type || email.indexOf("@") < 1) {
+      err.textContent = "Please add your name, a valid email, your state, and your agency type, then press the button again.";
+      err.style.display = "block";
+      return;
+    }
+    var input = gather();
+    var r = computeExposure(input);
+    var btn = document.getElementById("sendBtn");
+    btn.disabled = true;
+    btn.textContent = "Sending...";
+    var payload = {
+      _subject: "Held-paycheck breakdown request: " + name + " - " + money(r.headlineTotal) + " exposure - " + r.state.toUpperCase(),
+      _template: "table",
+      name: name, email: email, state: state, agency_type: type,
+      law_priced: r.state,
+      headline_exposure: money(r.headlineTotal),
+      wages_per_caregiver: money(r.wagesPerCaregiver),
+      caregivers_affected: r.caregivers,
+      results: resultsText(r, input)
+    };
+    fetch(ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify(payload)
+    }).then(function (resp) {
+      if (!resp.ok) { throw new Error("send failed"); }
+      document.getElementById("sentNote").textContent = "Your request went through. The detailed breakdown of this scenario will be sent to " + email + ". If a paycheck is being held right now, pay the hours worked first and get advice on the rest.";
+      btn.textContent = "Breakdown requested";
+    }).catch(function () {
+      btn.disabled = false;
+      btn.textContent = "Email me the breakdown";
+      err.textContent = "That did not go through. Check your connection and press the button again. Your scenario is still on this page.";
+      err.style.display = "block";
+    });
+  });
+})();
+</script>
+</body>
+</html>
