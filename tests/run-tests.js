@@ -178,14 +178,43 @@ check("results capture form is intact and working-shape", function () {
   assert.ok(html.indexOf('id="cap-email"') !== -1);
   assert.ok(html.indexOf('id="cap-state"') !== -1);
   assert.ok(html.indexOf('id="cap-type"') !== -1);
-  assert.ok(html.indexOf("Your score is ready") !== -1);
+  assert.ok(html.indexOf("Want your breakdown emailed to you?") !== -1);
+  assert.ok(html.indexOf("Email me my breakdown") !== -1);
   assert.ok(html.indexOf("https://formsubmit.co/ajax/359af7a0ec42d917c26fedc684ecd01c") !== -1);
   assert.ok(html.indexOf("validEmail") !== -1);
 });
 check("privacy language is explicit in the page", function () {
-  assert.ok(html.indexOf("nothing leaves this page until you submit the short form") !== -1);
+  assert.ok(html.indexOf("Nothing leaves this page unless you choose to send the optional form") !== -1);
   assert.ok(html.indexOf("are emailed to Boswell Consulting Agency") !== -1);
   assert.ok(html.indexOf("Your information is never sold") !== -1);
+});
+check("results reveal immediately, with no form in front of the score", function () {
+  // The gate-era flow is gone: no staging step and no reveal-on-submit label.
+  assert.ok(html.indexOf("stageResults") === -1, "gate staging function left in page");
+  assert.ok(html.indexOf("Show my score") === -1, "gate button label left in page");
+  assert.ok(html.indexOf("Your score is ready") === -1, "gate heading left in page");
+  // Both tracks reveal through showResults, which renders directly.
+  assert.ok(html.indexOf('showResults("cert", p, risk, recs)') !== -1);
+  assert.ok(html.indexOf('showResults("nm", p, risk, recs)') !== -1);
+  var showBody = html.slice(html.indexOf("function showResults"), html.indexOf("function runAudit"));
+  assert.ok(showBody.indexOf("renderResults();") !== -1, "showResults must render immediately");
+  // The optional capture submit never renders or unhides the results;
+  // it only confirms the send.
+  var handler = html.slice(html.indexOf('getElementById("capture-form").addEventListener("submit"'));
+  assert.ok(handler.indexOf("renderResults(") === -1, "capture submit still reveals the results");
+  assert.ok(handler.indexOf('getElementById("capture-sent")') !== -1, "capture success must confirm the send");
+  // The sent note inside the results stays hidden until a send succeeds:
+  // renderResults itself must not force it visible.
+  var renderBody = html.slice(html.indexOf("function renderResults"), html.indexOf("// Builds a plain-text summary"));
+  assert.ok(renderBody.indexOf("sent-note") === -1, "renderResults must not claim the results were sent");
+});
+check("capture card sits after the results and is framed as optional", function () {
+  assert.ok(html.indexOf('id="results"') < html.indexOf('id="capture"'),
+    "results section must come before the capture section");
+  assert.ok(html.indexOf("This step is optional") !== -1);
+  assert.ok(html.indexOf('id="capture-sent"') !== -1);
+  assert.ok(html.indexOf("#capture { display: none; }") !== -1,
+    "capture card stays hidden until a run produces results");
 });
 check("both tracks are present in the page", function () {
   assert.ok(html.indexOf('id="audit-form-nm"') !== -1);

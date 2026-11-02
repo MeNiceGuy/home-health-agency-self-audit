@@ -81,10 +81,34 @@ check("no priced products are pitched anywhere in the tool", () => {
   assert.ok(html.indexOf("Operations Audit Toolkit") === -1, "toolkit pitch in page");
   assert.ok(html.indexOf("Playbook") === -1, "playbook pitch in page");
 });
-check("results stay gated behind the capture form", () => {
+check("results render immediately, with no form in front of the cost", () => {
   assert.ok(html.indexOf('id="results"') !== -1);
+  assert.ok(html.indexOf('id="calcBtn"') !== -1, "calculate button missing");
+  assert.ok(html.indexOf("See my turnover cost") !== -1);
+  // The calculate path renders without any fetch or form submit.
+  const showBody = html.slice(html.indexOf("function showResults"), html.indexOf('getElementById("calcBtn")'));
+  assert.ok(showBody.indexOf("computeTurnoverCost(input)") !== -1);
+  assert.ok(showBody.indexOf("render(r, input)") !== -1);
+  assert.ok(showBody.indexOf('getElementById("results")') !== -1);
+  assert.ok(showBody.indexOf("fetch(") === -1, "reveal path must not send anything");
+  // Gate-era copy is gone.
+  assert.ok(html.indexOf("unlocks") === -1, "gated copy left in page");
+  assert.ok(html.indexOf("Your cost is ready") === -1, "gate heading left in page");
+  assert.ok(html.indexOf("Show my turnover cost") === -1, "gate button label left in page");
+});
+check("capture is optional, sits after the results, and only confirms the send", () => {
   assert.ok(html.indexOf('id="captureForm"') !== -1);
-  assert.ok(html.indexOf("_honey") === -1 || html.indexOf("fHoney") !== -1);
+  assert.ok(html.indexOf('id="fHoney"') !== -1);
+  assert.ok(html.indexOf('id="results"') < html.indexOf('id="gate"'),
+    "results card must come before the optional capture card");
+  assert.ok(html.indexOf("This step is optional") !== -1);
+  assert.ok(html.indexOf("#gate { display: none; }") !== -1,
+    "capture card stays hidden until results exist");
+  assert.ok(html.indexOf('id="gateSent"') !== -1);
+  const handler = html.slice(html.indexOf('getElementById("captureForm").addEventListener("submit"'));
+  assert.ok(handler.indexOf('getElementById("gateSent")') !== -1, "capture success must confirm the send");
+  assert.ok(handler.indexOf('getElementById("results")') === -1,
+    "capture submit must not reveal or scroll the results");
 });
 check("README documents the model and the benchmark source", () => {
   assert.ok(readme.indexOf("Activated Insights") !== -1);

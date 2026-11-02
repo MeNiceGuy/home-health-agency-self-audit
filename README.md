@@ -52,7 +52,7 @@ Questions 5 to 8 (turnover, start-of-care delay, documentation lag, referral sou
 
 ## Privacy
 
-Scoring runs in the browser, and nothing leaves the page until the visitor submits the short results form to see their score. On submit, the visitor's name, email, state, agency type, answers, and score are emailed to Boswell Consulting Agency (through the FormSubmit relay) so Dr. Boswell can see where owners are struggling and follow up with help. There is no account and no tracking on the page, and visitor information is never sold.
+Scoring runs in the browser, and the score shows on the page right away, with no form in front of it. Nothing leaves the page unless the visitor chooses to send the optional form below their results. On submit, the visitor's name, email, state, agency type, answers, and score are emailed to Boswell Consulting Agency (through the FormSubmit relay) so Dr. Boswell can see where owners are struggling and follow up with help. There is no account and no tracking on the page, and visitor information is never sold.
 
 ## Run it locally
 
@@ -83,7 +83,7 @@ The tests exercise the scoring math at its boundaries, confirm the non-scored qu
 
 ## Going deeper
 
-The tool itself is the free offer: an owner answers eight questions, leaves a name and email, and gets a score with recommended actions. Nothing is sold on the page. The follow-up happens by email: Dr. Boswell reviews problems like these free, and clients pay only for the fix or deliverable.
+The tool itself is the free offer: an owner answers eight questions and gets a score with recommended actions on the spot. Leaving a name and email is optional and sends the results to Boswell Consulting Agency for follow-up. Nothing is sold on the page. The follow-up happens by email: Dr. Boswell reviews problems like these free, and clients pay only for the fix or deliverable.
 
 ## License
 

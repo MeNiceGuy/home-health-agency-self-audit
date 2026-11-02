@@ -41,6 +41,7 @@
   .row .amt { font-weight: bold; white-space: nowrap; }
   .err { color: var(--red); font-weight: bold; display: none; margin-top: 10px; }
   #results { display: none; }
+  #gate { display: none; }
   .hp { position: absolute; left: -9999px; top: -9999px; }
   a { color: var(--accent-dk); }
 </style>
@@ -54,7 +55,7 @@
 
   <div class="card">
     <h2>How this works</h2>
-    <p>Answer ten questions about your agency. Nothing leaves this page while you type. When you are ready, a short form asks for your name and email, your numbers are sent to Boswell Consulting Agency, and your full cost breakdown unlocks on the spot: what turnover cost you this year, what each departure costs, and how your rate compares to the industry.</p>
+    <p>Answer ten questions about your agency. Nothing leaves this page while you type. When you are ready, press the button and your full cost breakdown shows on the spot: what turnover cost you this year, what each departure costs, and how your rate compares to the industry. No form stands in front of your number. After you see it, an optional short form can send your numbers to Boswell Consulting Agency for a follow-up.</p>
     <p class="fine">The sample figures loaded below are one sample agency. Replace them with yours.</p>
   </div>
 
@@ -100,34 +101,8 @@
     <label for="adminPay">What that time is worth, per hour ($)</label>
     <p class="help">Where to find this: the hourly pay of the person doing the hiring work, or your own hourly value if that is you.</p>
     <input type="number" id="adminPay" min="0" step="1" value="22">
-  </div>
 
-  <div class="card" id="gate">
-    <h2>Your cost is ready</h2>
-    <p>Enter your name and email and your full breakdown unlocks here: the yearly cost, the cost of each departure, and how your turnover rate compares to the industry average. Your numbers are sent to Boswell Consulting Agency so Dr. Boswell can see where agencies are losing money. Your information is never sold.</p>
-    <form id="captureForm" novalidate>
-      <label for="fName">Full name</label>
-      <input type="text" id="fName" autocomplete="name" required>
-      <label for="fEmail">Email address</label>
-      <input type="email" id="fEmail" autocomplete="email" required>
-      <label for="fState">State</label>
-      <select id="fState" required>
-        <option value="">Choose your state</option>
-        <option>Alabama</option><option>Alaska</option><option>Arizona</option><option>Arkansas</option><option>California</option><option>Colorado</option><option>Connecticut</option><option>Delaware</option><option>District of Columbia</option><option>Florida</option><option>Georgia</option><option>Hawaii</option><option>Idaho</option><option>Illinois</option><option>Indiana</option><option>Iowa</option><option>Kansas</option><option>Kentucky</option><option>Louisiana</option><option>Maine</option><option>Maryland</option><option>Massachusetts</option><option>Michigan</option><option>Minnesota</option><option>Mississippi</option><option>Missouri</option><option>Montana</option><option>Nebraska</option><option>Nevada</option><option>New Hampshire</option><option>New Jersey</option><option>New Mexico</option><option>New York</option><option>North Carolina</option><option>North Dakota</option><option>Ohio</option><option>Oklahoma</option><option>Oregon</option><option>Pennsylvania</option><option>Rhode Island</option><option>South Carolina</option><option>South Dakota</option><option>Tennessee</option><option>Texas</option><option>Utah</option><option>Vermont</option><option>Virginia</option><option>Washington</option><option>West Virginia</option><option>Wisconsin</option><option>Wyoming</option><option>Not launched yet</option>
-      </select>
-      <label for="fType">Agency type</label>
-      <select id="fType" required>
-        <option value="">Choose your agency type</option>
-        <option>Medicare-certified home health</option>
-        <option>Non-medical home care</option>
-        <option>Both</option>
-        <option>Other health care</option>
-        <option>Not launched yet</option>
-      </select>
-      <input type="text" id="fHoney" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
-      <button type="submit" id="sendBtn">Show my turnover cost</button>
-      <p class="err" id="sendErr">That did not go through. Check your connection and press the button again. Your answers are still on this page.</p>
-    </form>
+    <button type="button" id="calcBtn">See my turnover cost</button>
   </div>
 
   <div class="card" id="results">
@@ -154,6 +129,35 @@
     <p>Second, shorten the uncovered weeks. A small bench of on-call caregivers who already cleared your screening costs little to hold and cuts the margin you lose every time someone walks.</p>
     <p>Third, recheck this number quarterly. Turnover cost compounds quietly, and the quarter you catch it early is the cheapest one to fix.</p>
     <p class="fine" id="sentNote"></p>
+  </div>
+
+  <div class="card" id="gate">
+    <h2>Want a copy of your breakdown?</h2>
+    <p>Your cost is already on this page, and it stays there either way. This step is optional: enter your name and email and your numbers and full breakdown are sent to Boswell Consulting Agency so Dr. Boswell can see where agencies are losing money and follow up with help. Your information is never sold.</p>
+    <form id="captureForm" novalidate>
+      <label for="fName">Full name</label>
+      <input type="text" id="fName" autocomplete="name" required>
+      <label for="fEmail">Email address</label>
+      <input type="email" id="fEmail" autocomplete="email" required>
+      <label for="fState">State</label>
+      <select id="fState" required>
+        <option value="">Choose your state</option>
+        <option>Alabama</option><option>Alaska</option><option>Arizona</option><option>Arkansas</option><option>California</option><option>Colorado</option><option>Connecticut</option><option>Delaware</option><option>District of Columbia</option><option>Florida</option><option>Georgia</option><option>Hawaii</option><option>Idaho</option><option>Illinois</option><option>Indiana</option><option>Iowa</option><option>Kansas</option><option>Kentucky</option><option>Louisiana</option><option>Maine</option><option>Maryland</option><option>Massachusetts</option><option>Michigan</option><option>Minnesota</option><option>Mississippi</option><option>Missouri</option><option>Montana</option><option>Nebraska</option><option>Nevada</option><option>New Hampshire</option><option>New Jersey</option><option>New Mexico</option><option>New York</option><option>North Carolina</option><option>North Dakota</option><option>Ohio</option><option>Oklahoma</option><option>Oregon</option><option>Pennsylvania</option><option>Rhode Island</option><option>South Carolina</option><option>South Dakota</option><option>Tennessee</option><option>Texas</option><option>Utah</option><option>Vermont</option><option>Virginia</option><option>Washington</option><option>West Virginia</option><option>Wisconsin</option><option>Wyoming</option><option>Not launched yet</option>
+      </select>
+      <label for="fType">Agency type</label>
+      <select id="fType" required>
+        <option value="">Choose your agency type</option>
+        <option>Medicare-certified home health</option>
+        <option>Non-medical home care</option>
+        <option>Both</option>
+        <option>Other health care</option>
+        <option>Not launched yet</option>
+      </select>
+      <input type="text" id="fHoney" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <button type="submit" id="sendBtn">Email me my breakdown</button>
+      <p class="err" id="sendErr">That did not go through. Check your connection and press the button again. Your answers are still on this page.</p>
+    </form>
+    <p id="gateSent" style="display:none"><strong>Sent.</strong> Your numbers went to Boswell Consulting Agency. If your turnover cost needs a deeper look, Dr. Boswell reviews problems like these free and follows up by email. You only pay if you want the fix built for you.</p>
   </div>
 
   <div class="card">
@@ -214,6 +218,27 @@
     return lines.join("\n");
   }
 
+  // Results first: the cost renders the moment the owner asks for it.
+  // No form stands in front of the number. The capture card below the
+  // results is optional and is reset for each run.
+  function showResults() {
+    var input = gather();
+    var r = computeTurnoverCost(input);
+    render(r, input);
+    var res = document.getElementById("results");
+    res.style.display = "block";
+    document.getElementById("gate").style.display = "block";
+    document.getElementById("captureForm").style.display = "block";
+    document.getElementById("gateSent").style.display = "none";
+    document.getElementById("sentNote").textContent = "";
+    var btn = document.getElementById("sendBtn");
+    btn.disabled = false;
+    btn.textContent = "Email me my breakdown";
+    document.getElementById("sendErr").style.display = "none";
+    res.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+  document.getElementById("calcBtn").addEventListener("click", showResults);
+
   document.getElementById("captureForm").addEventListener("submit", function (ev) {
     ev.preventDefault();
     var err = document.getElementById("sendErr");
@@ -248,16 +273,13 @@
       body: JSON.stringify(payload)
     }).then(function (resp) {
       if (!resp.ok) { throw new Error("send failed"); }
-      render(r, input);
       document.getElementById("sentNote").textContent = "Your numbers were sent to Boswell Consulting Agency. If your turnover cost needs a deeper look, Dr. Boswell reviews problems like these free. You only pay if you want the fix built for you.";
-      document.getElementById("gate").style.display = "none";
-      var res = document.getElementById("results");
-      res.style.display = "block";
-      res.scrollIntoView({ behavior: "smooth", block: "start" });
+      document.getElementById("captureForm").style.display = "none";
+      document.getElementById("gateSent").style.display = "block";
     }).catch(function () {
       btn.disabled = false;
-      btn.textContent = "Show my turnover cost";
-      err.textContent = "That did not go through. Check your connection and press the button again. Your answers are still on this page.";
+      btn.textContent = "Email me my breakdown";
+      err.textContent = "That did not go through. Check your connection and press the button again. Your cost is still on this page above.";
       err.style.display = "block";
     });
   });

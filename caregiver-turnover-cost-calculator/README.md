@@ -25,7 +25,7 @@ The cost structure is Dr. Devon Boswell's professional judgment from consulting 
 
 ## Capture
 
-The result is gated behind a short form (name, email, state, agency type). Submissions post to the same FormSubmit endpoint as the Home Health Agency Self-Audit and land in the Boswell Consulting Agency inbox with every input and the full computed breakdown. The page promises the information is never sold, and nothing is sold on the page itself. Follow-up happens by email; turnover leads match the retention follow-up draft kept with the self-audit tool.
+The result shows on the page the moment the owner presses the calculate button, with no form in front of it. After the result, an optional short form (name, email, state, agency type) sends the numbers and the full computed breakdown to Boswell Consulting Agency for follow-up. Submissions post to the same FormSubmit endpoint as the Home Health Agency Self-Audit and land in the Boswell Consulting Agency inbox with every input and the full computed breakdown. The page promises the information is never sold, and nothing is sold on the page itself. Follow-up happens by email; turnover leads match the retention follow-up draft kept with the self-audit tool.
 
 ## Run it locally
 

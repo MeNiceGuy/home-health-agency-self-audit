@@ -72,7 +72,7 @@
 
   <header class="top">
     <h1>Home Health and Home Care Agency Self-Audit</h1>
-    <p>Answer 8 questions about your agency and get a risk score from 0 to 100, your three biggest problem areas, and plain-language fixes. There are two tracks, one for Medicare-certified home health and one for non-medical home care, so the questions fit your world. Free, takes about 2 minutes. Your answers are scored right on this page. To see your score, you share your name, email, state, and agency type, and your answers and score are sent to Boswell Consulting Agency so Dr. Boswell can see where owners are struggling and follow up with help.</p>
+    <p>Answer 8 questions about your agency and get a risk score from 0 to 100, your three biggest problem areas, and plain-language fixes. There are two tracks, one for Medicare-certified home health and one for non-medical home care, so the questions fit your world. Free, takes about 2 minutes. Your answers are scored right on this page and your score shows on the spot, with no form in front of it. After you see your score, you can optionally share your name, email, state, and agency type to get a copy of your breakdown and a follow-up; then your answers and score are sent to Boswell Consulting Agency so Dr. Boswell can see where owners are struggling and follow up with help. Your information is never sold.</p>
   </header>
 
   <section class="card noprint" id="track-card">
@@ -204,9 +204,48 @@
     </div>
   </form>
 
+  <section class="card" id="results" aria-live="polite">
+    <h2 style="margin-top:0">Your results</h2>
+    <div id="sent-note">Your answers and score were sent to Boswell Consulting Agency. If your numbers need a deeper look, Dr. Boswell reviews problems like these free. You only pay if you want the fix built for you.</div>
+    <div class="score-band">
+      <svg class="dial" viewBox="0 0 148 148" role="img" aria-label="Risk score dial">
+        <circle cx="74" cy="74" r="64" fill="none" stroke="#e2e8f0" stroke-width="14"/>
+        <circle id="dial-arc" cx="74" cy="74" r="64" fill="none" stroke="#0f766e" stroke-width="14"
+                stroke-linecap="round" transform="rotate(-90 74 74)" stroke-dasharray="402" stroke-dashoffset="402"/>
+        <text id="dial-num" x="74" y="70" text-anchor="middle" font-size="34" font-weight="700" fill="#1a2332">0</text>
+        <text x="74" y="94" text-anchor="middle" font-size="13" fill="#5b6b80">out of 100</text>
+      </svg>
+      <div>
+        <div style="margin-bottom:8px"><span class="tier" id="tier-badge">Low</span></div>
+        <div id="summary-line" style="max-width:420px"></div>
+        <p class="fine" style="margin-top:8px" id="score-basis"></p>
+      </div>
+    </div>
+
+    <h3>Your three biggest drivers</h3>
+    <div id="drivers"></div>
+
+    <h3>Recommended actions</h3>
+    <p class="fine" id="scope-note"></p>
+    <div id="recs"></div>
+
+    <p class="fine">Want more free breakdowns like this one? Dr. Boswell writes a free newsletter for agency owners on Substack: <a href="https://drboswell.substack.com/subscribe" target="_blank" rel="noopener">subscribe on Substack</a>.</p>
+
+    <div class="actions noprint">
+      <button class="ghost" onclick="window.print()">Print or save as PDF</button>
+      <button class="ghost" type="button" id="copy-results-btn">Copy my results</button>
+      <span class="fine" id="copy-confirm" role="status">Copied</span>
+      <button class="ghost" onclick="document.getElementById('track-card').scrollIntoView({behavior:'smooth'})">Run it again</button>
+    </div>
+
+    <p class="fine" id="how-works"></p>
+
+    <p class="fine"><strong>Privacy:</strong> your answers are scored right on this page, and your score shows whether or not you share anything. Nothing leaves this page unless you choose to send the optional form below. If you send it, your name, email, state, agency type, answers, and score are emailed to Boswell Consulting Agency so Dr. Boswell can see where owners are struggling and follow up with help. Your information is never sold, and there is no account and no tracking on this page.</p>
+  </section>
+
   <section class="card" id="capture" aria-live="polite">
-    <h2 style="margin-top:0">Your score is ready</h2>
-    <p>One short step and your score, your three biggest problem areas, and the fixes show right here on this page. Your name, email, state, agency type, answers, and score are emailed to Boswell Consulting Agency. That is how Dr. Boswell sees where owners are struggling and follows up with help. Your information is never sold.</p>
+    <h2 style="margin-top:0">Want your breakdown emailed to you?</h2>
+    <p>Your score, your three biggest problem areas, and the fixes are already on this page, and they stay there either way. This step is optional: if you want a copy of your full breakdown and a follow-up, share your name, email, state, and agency type, and your answers and score are emailed to Boswell Consulting Agency. That is how Dr. Boswell sees where owners are struggling and follows up with help. Your information is never sold.</p>
     <form id="capture-form" novalidate>
       <div class="cap-field">
         <label for="cap-name">Your name</label>
@@ -286,49 +325,13 @@
       </div>
       <input type="text" id="cap-honey" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
       <div class="actions">
-        <button class="primary" type="submit" id="cap-submit">Show my score</button>
+        <button class="primary" type="submit" id="cap-submit">Email me my breakdown</button>
       </div>
       <div id="capture-error" role="alert"></div>
     </form>
-  </section>
-
-  <section class="card" id="results" aria-live="polite">
-    <h2 style="margin-top:0">Your results</h2>
-    <div id="sent-note">Your answers and score were sent to Boswell Consulting Agency. If your numbers need a deeper look, Dr. Boswell reviews problems like these free. You only pay if you want the fix built for you.</div>
-    <div class="score-band">
-      <svg class="dial" viewBox="0 0 148 148" role="img" aria-label="Risk score dial">
-        <circle cx="74" cy="74" r="64" fill="none" stroke="#e2e8f0" stroke-width="14"/>
-        <circle id="dial-arc" cx="74" cy="74" r="64" fill="none" stroke="#0f766e" stroke-width="14"
-                stroke-linecap="round" transform="rotate(-90 74 74)" stroke-dasharray="402" stroke-dashoffset="402"/>
-        <text id="dial-num" x="74" y="70" text-anchor="middle" font-size="34" font-weight="700" fill="#1a2332">0</text>
-        <text x="74" y="94" text-anchor="middle" font-size="13" fill="#5b6b80">out of 100</text>
-      </svg>
-      <div>
-        <div style="margin-bottom:8px"><span class="tier" id="tier-badge">Low</span></div>
-        <div id="summary-line" style="max-width:420px"></div>
-        <p class="fine" style="margin-top:8px" id="score-basis"></p>
-      </div>
+    <div id="capture-sent" style="display:none">
+      <p style="margin:0"><strong>Sent.</strong> Your answers and score went to Boswell Consulting Agency. If your numbers need a deeper look, Dr. Boswell reviews problems like these free and follows up by email. You only pay if you want the fix built for you.</p>
     </div>
-
-    <h3>Your three biggest drivers</h3>
-    <div id="drivers"></div>
-
-    <h3>Recommended actions</h3>
-    <p class="fine" id="scope-note"></p>
-    <div id="recs"></div>
-
-    <p class="fine">Want more free breakdowns like this one? Dr. Boswell writes a free newsletter for agency owners on Substack: <a href="https://drboswell.substack.com/subscribe" target="_blank" rel="noopener">subscribe on Substack</a>.</p>
-
-    <div class="actions noprint">
-      <button class="ghost" onclick="window.print()">Print or save as PDF</button>
-      <button class="ghost" type="button" id="copy-results-btn">Copy my results</button>
-      <span class="fine" id="copy-confirm" role="status">Copied</span>
-      <button class="ghost" onclick="document.getElementById('track-card').scrollIntoView({behavior:'smooth'})">Run it again</button>
-    </div>
-
-    <p class="fine" id="how-works"></p>
-
-    <p class="fine"><strong>Privacy:</strong> your answers are scored right on this page, and nothing leaves this page until you submit the short form to see your score. When you submit it, your name, email, state, agency type, answers, and score are emailed to Boswell Consulting Agency so Dr. Boswell can see where owners are struggling and follow up with help. Your information is never sold, and there is no account and no tracking on this page.</p>
   </section>
 
   <section class="card meth" id="methodology" aria-label="Methodology and sources">
@@ -485,21 +488,23 @@ function loadSampleNM() {
   runAuditNM(null);
 }
 
-// Compute and stash results, then ask for the short capture form.
-function stageResults(track, inputs, risk, recs) {
+// Compute, stash, and reveal the results right away. No form stands
+// between the visitor and the score. The capture card below the results
+// is optional and is reset for each run.
+function showResults(track, inputs, risk, recs) {
   lastTrack = track;
   lastInputs = inputs;
   lastRisk = risk;
   lastRecs = recs;
-  document.getElementById("results").style.display = "none";
   document.getElementById("sent-note").style.display = "none";
-  var cap = document.getElementById("capture");
-  cap.style.display = "block";
+  document.getElementById("capture").style.display = "block";
+  document.getElementById("capture-form").style.display = "block";
+  document.getElementById("capture-sent").style.display = "none";
   var btn = document.getElementById("cap-submit");
   btn.disabled = false;
-  btn.textContent = "Show my score";
+  btn.textContent = "Email me my breakdown";
   document.getElementById("capture-error").style.display = "none";
-  cap.scrollIntoView({ behavior: "smooth" });
+  renderResults();
 }
 function runAudit(e) {
   if (e) e.preventDefault();
@@ -507,7 +512,7 @@ function runAudit(e) {
   var risk = computeRiskModel(p);
   var flags = operationalFlags(p);
   var recs = generateRecommendations(p, risk, flags);
-  stageResults("cert", p, risk, recs);
+  showResults("cert", p, risk, recs);
   return false;
 }
 function runAuditNM(e) {
@@ -516,7 +521,7 @@ function runAuditNM(e) {
   var risk = computeRiskModelNM(p);
   var flags = operationalFlagsNM(p);
   var recs = generateRecommendationsNM(p, risk, flags);
-  stageResults("nm", p, risk, recs);
+  showResults("nm", p, risk, recs);
   return false;
 }
 
@@ -538,7 +543,6 @@ function renderResults() {
   document.getElementById("score-basis").textContent = meta.basis;
   document.getElementById("scope-note").textContent = meta.scope;
   document.getElementById("how-works").textContent = meta.how;
-  document.getElementById("sent-note").style.display = "block";
 
   var d = document.getElementById("drivers");
   d.innerHTML = "";
@@ -622,8 +626,8 @@ function copyResults() {
 }
 document.getElementById("copy-results-btn").addEventListener("click", copyResults);
 
-// Capture step: validate, send the lead and results to Boswell Consulting
-// Agency by email, then reveal the score on success.
+// Optional capture step: the score is already on the page. Validate, send
+// the lead and results to Boswell Consulting Agency by email, then confirm.
 function validEmail(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
@@ -655,7 +659,7 @@ document.getElementById("capture-form").addEventListener("submit", function (e) 
   e.preventDefault();
   var err = document.getElementById("capture-error");
   function fail(msg) { err.textContent = msg; err.style.display = "block"; }
-  if (!lastRisk) { fail("Run the audit first. Your score will be ready right after."); return; }
+  if (!lastRisk) { fail("Run the audit first. Your score shows right on this page, and then you can send it from here."); return; }
   if (document.getElementById("cap-honey").value) { return; }
   var name = document.getElementById("cap-name").value.trim();
   var email = document.getElementById("cap-email").value.trim();
@@ -694,17 +698,18 @@ document.getElementById("capture-form").addEventListener("submit", function (e) 
     return res.json().catch(function () { return {}; });
   }).then(function (data) {
     if (data && (data.success === "true" || data.success === true)) {
-      document.getElementById("capture").style.display = "none";
-      renderResults();
+      document.getElementById("capture-form").style.display = "none";
+      document.getElementById("capture-sent").style.display = "block";
+      document.getElementById("sent-note").style.display = "block";
     } else {
       btn.disabled = false;
-      btn.textContent = "Show my score";
-      fail("The send did not go through. Check your connection and try once more. Your answers are still on this page.");
+      btn.textContent = "Email me my breakdown";
+      fail("The send did not go through. Check your connection and try once more. Your score is still on this page above.");
     }
   }).catch(function () {
     btn.disabled = false;
-    btn.textContent = "Show my score";
-    fail("The send did not go through. Check your connection and try once more. Your answers are still on this page.");
+    btn.textContent = "Email me my breakdown";
+    fail("The send did not go through. Check your connection and try once more. Your score is still on this page above.");
   });
 });
 </script>
