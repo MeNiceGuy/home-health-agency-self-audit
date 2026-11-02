@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ohio Medicaid Payer Enrollment and Contracting Tracker | Boswell Consulting Agency</title>
+<meta name="description" content="Free tracker for Ohio Medicaid providers: Door 1 is Ohio Department of Medicaid enrollment in PNM. Door 2 is credentialing and contracting with each of the seven managed care plans separately, plus OhioRISE. Every door is sourced to the state or the plan itself.">
+<style>
+  :root {
+    --ink: #17242e;
+    --mute: #5a6b76;
+    --accent: #0e7a5f;
+    --accent-dk: #0a5e49;
+    --bg: #f4f7f5;
+    --card: #ffffff;
+    --border: #dbe4e0;
+    --red: #b91c1c;
+    --amber-ink: #7a5200;
+    --amber-bg: #fbf3df;
+    --amber-border: #e3cd8f;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Georgia, "Times New Roman", serif; background: var(--bg); color: var(--ink); line-height: 1.55; }
+  .wrap { max-width: 820px; margin: 0 auto; padding: 24px 18px 60px; }
+  header { text-align: center; padding: 26px 0 6px; }
+  h1 { font-size: 2rem; margin: 0 0 8px; }
+  .sub { color: var(--mute); font-size: 1.05rem; margin: 0 auto; max-width: 640px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 22px; margin: 18px 0; }
+  h2 { font-size: 1.3rem; margin: 4px 0 12px; }
+  h3 { font-size: 1.08rem; margin: 18px 0 6px; }
+  label { display: block; font-weight: bold; margin: 16px 0 4px; }
+  .help { color: var(--mute); font-size: 0.92rem; margin: 2px 0 6px; }
+  input[type="number"], input[type="text"], input[type="email"], select {
+    width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; font-family: inherit; background: #fbfcfb;
+  }
+  button { background: var(--accent); color: #fff; border: 0; border-radius: 10px; padding: 13px 22px; font-size: 1.05rem; font-weight: bold; cursor: pointer; width: 100%; margin-top: 18px; }
+  button:hover { background: var(--accent-dk); }
+  button.secondary { background: #eef3f1; color: var(--accent-dk); border: 1px solid var(--border); }
+  .fine { color: var(--mute); font-size: 0.9rem; }
+  .err { color: var(--red); font-weight: bold; display: none; margin-top: 10px; }
+  .hp { position: absolute; left: -9999px; top: -9999px; }
+  a { color: var(--accent-dk); }
+  .check { display: flex; gap: 10px; align-items: flex-start; font-weight: normal; margin: 10px 0; cursor: pointer; }
+  .check input { width: 20px; height: 20px; margin-top: 2px; flex: none; }
+  .alert { border: 1px solid var(--amber-border); background: var(--amber-bg); color: var(--amber-ink); border-radius: 10px; padding: 14px 16px; margin: 14px 0; }
+  .alert p { margin: 6px 0; }
+  .src { color: var(--mute); font-size: 0.9rem; border-top: 1px solid var(--border); padding-top: 10px; margin-top: 14px; }
+  .big { font-size: 2rem; font-weight: bold; text-align: center; margin: 6px 0 0; }
+  .mid { text-align: center; color: var(--mute); margin: 0 0 8px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Ohio Medicaid Payer Enrollment and Contracting Tracker</h1>
+    <p class="sub">Ohio Medicaid has two doors, and they are not the same door. Door 1 is enrollment with the Ohio Department of Medicaid in the PNM module. Door 2 is credentialing and contracting with each managed care plan, one plan at a time. This page walks both doors in order and tracks where you stand with each one.</p>
+  </header>
+
+  <div class="card" id="tracker">
+    <h2>How this works</h2>
+    <p>The whole tracker is on this page, right now. No email is required to use it. Check a box when a step is done and the page remembers it in your own browser, on this device, so you can close the page and pick up where you left off. Your progress is stored only in your browser. Nothing about your progress leaves this page unless you ask for the emailed checklist copy at the bottom.</p>
+    <p>Enrollment is not network participation. Finishing Door 1 makes you an Ohio Medicaid provider. It does not put you in any plan's network. Each of the seven managed care plans contracts separately, and a plan counts you as participating only when its credentialing and contracting are both finished. OhioRISE is a separate door again, run by Aetna Better Health of Ohio for youth with complex behavioral health needs.</p>
+    <p class="big" id="progressBig">0 of 21</p>
+    <p class="mid" id="progressLabel">steps checked</p>
+    <button type="button" class="secondary" id="resetBtn">Reset my progress</button>
+  </div>
+
+  <div class="card">
+    <h2>Before you start: what to have ready</h2>
+    <p>Every door below asks for some mix of the same core documents. Gather them once and each plan's process gets shorter. This list is drawn from what PNM and the plans ask for on their own pages, linked in each section.</p>
+    <label class="check"><input type="checkbox" data-item="prep-ohid"> OH|ID account created (needed to sign in to PNM)</label>
+    <label class="check"><input type="checkbox" data-item="prep-docs"> Documents gathered: NPI, W-9, licenses or certifications, specialty codes</label>
+    <p>Have ready, in one folder: your group and rendering provider NPIs; a signed W-9 for the legal entity exactly as the IRS has it; state licenses or certifications for the agency and each rendering provider; your ODM and OhioMHAS specialty codes (for behavioral health, specialty 84 is Mental Health and specialty 95 is Substance Use Disorder); and the list of counties you will actually serve.</p>
+  </div>
+
+  <div class="card">
+    <h2>Door 1: Enroll with Ohio Medicaid in PNM</h2>
+    <p>The Provider Network Management module, PNM, is Ohio Medicaid's single system for provider enrollment and centralized credentialing. You sign in with your OH|ID, the State of Ohio's digital identity. Credentialing for Ohio Medicaid runs through ODM's centralized credentialing inside this same process, not through each plan. ODM says this directly: the PNM module is the single point for provider enrollment, centralized credentialing, and provider self-service updates.</p>
+    <label class="check"><input type="checkbox" data-item="pnm-submitted"> Enrollment application submitted in PNM</label>
+    <label class="check"><input type="checkbox" data-item="pnm-credentialing"> ODM centralized credentialing finished or confirmed in PNM</label>
+    <label class="check"><input type="checkbox" data-item="pnm-approved"> Ohio Medicaid enrollment approved, Medicaid ID in hand</label>
+    <div class="alert">
+      <p><strong>Pause notice for some provider types.</strong> Effective May 14, 2026 through November 14, 2026, under 42 CFR 455.470, ODM is not accepting new enrollment applications for these PNM provider types: 16 (Other Accredited Home Health Agency), 25 (Non-Agency Personal Care Aide), 26 (Non-Agency Home Care Attendant), 38 (Private Duty Nurse), 44 (Hospice), 45 (Waivered Services Organization), 55 (Waivered Services Individual), and 60 (Medicare Certified Home Health Agency). Applications for these types that were submitted before May 14, 2026 but not yet processed will be denied, and ODM says those applicants may reapply when the moratorium ends. Providers already enrolled in these types keep operating; demographic changes and revalidations are still processed, but no new service locations are added during the pause.</p>
+      <p>Behavioral health provider types are not on ODM's list. If you are a behavioral health agency, this pause does not freeze your enrollment.</p>
+    </div>
+    <p>Stuck on the application or the sign-in? The Ohio Medicaid Integrated Helpdesk (IHD) is the support door ODM publishes for exactly this: 1-800-686-1516 or IHD@medicaid.ohio.gov, Monday through Friday, 8 a.m. to 4:30 p.m. Eastern. For provider enrollment prompts, ODM's notices say option 2, then option 2.</p>
+    <p class="src">Sources, checked November 1, 2026: Ohio Department of Medicaid, <a href="https://ohpnm.omes.maximus.com/OH_PNM_PROD/Account/Login.aspx">PNM portal sign-in page</a>, which carries the moratorium notice and the IHD contact; ODM, <a href="https://managedcare.medicaid.ohio.gov/managed-care/centralized-credentialing">PNM and Centralized Credentialing</a>; ODM provider notices published through GovDelivery, including the <a href="https://content.govdelivery.com/accounts/OHMEDICAID/bulletins/4195e95">May/June 2026 EVV newsletter</a> restating the moratorium list.</p>
+  </div>
+
+  <div class="card">
+    <h2>Door 2: Contract with each plan separately</h2>
+    <p>There are seven Ohio Medicaid managed care plans, and each one runs its own contracting. There is no single application that joins all seven. The working approach, which is Dr. Boswell's professional judgment from doing this work, is to file with all seven in parallel once Door 1 is approved, and to track each plan on its own line, because they move at different speeds and say no for different reasons.</p>
+    <p>One caution that applies to every plan below: a plan's contracting door being open does not guarantee its panel is open for your specialty in your county. Two of the seven plans say a version of this on their own pages right now, quoted in their sections. If a plan turns you down, get the reason in writing, specified by specialty, county, and scope of services, with the date the panel reopens or the request can be resubmitted. That written reason is what turns a dead end into a dated next step.</p>
+  </div>
+
+  <div class="card">
+    <h2>AmeriHealth Caritas Ohio</h2>
+    <p><strong>The door:</strong> the plan's Provider Contract Inquiry Form, sent with a completed W-9 to ProviderRecruitmentOH@amerihealthcaritas.com, or call Provider Recruitment at 1-833-296-2259. The inquiry form asks for the legal entity name as it appears on the W-9, tax ID, group NPI, CAQH number if you have one, and your Ohio Medicaid number.</p>
+    <p><strong>Panel status, in the plan's own words:</strong> on the day this page was checked, the join page said the AmeriHealth Caritas Ohio network panel is closed except for behavioral health providers who are CANS providers and vision exam providers, and that other provider types should check back in six months to see if the panel has reopened. Read that as the live answer for most specialties today, and still send the inquiry if you fit the exceptions, so your request is on file.</p>
+    <p>The plan's provider manual states the general rule plainly: providers are not considered participating, and are not eligible to serve members, until both credentialing and contracting have been completed.</p>
+    <label class="check"><input type="checkbox" data-item="ac-request"> AmeriHealth Caritas Ohio: contract inquiry sent</label>
+    <label class="check"><input type="checkbox" data-item="ac-done"> AmeriHealth Caritas Ohio: contract executed, effective date in hand</label>
+    <p class="src">Source, checked November 1, 2026: AmeriHealth Caritas Ohio, <a href="https://www.amerihealthcaritasoh.com/provider/credentialing">Join the AmeriHealth Caritas Ohio Network</a>, and the plan's Provider Manual posted on the same site.</p>
+  </div>
+
+  <div class="card">
+    <h2>Anthem Blue Cross and Blue Shield</h2>
+    <p><strong>The door:</strong> Anthem's Ohio provider site, under Our Network, following the prompts for your provider type. Anthem's Ohio Medicaid join page states the order of operations directly: providers interested in participating for Ohio Medicaid must be enrolled and credentialed through the state and have an active Ohio Medicaid number prior to contracting for this network. Door 1 first, then this door.</p>
+    <p>Questions about Ohio Medicaid participation can go to OhioMedicaidProvider@anthem.com, the address Anthem publishes in its Ohio provider orientation materials.</p>
+    <label class="check"><input type="checkbox" data-item="anthem-request"> Anthem: contracting started through Our Network</label>
+    <label class="check"><input type="checkbox" data-item="anthem-done"> Anthem: contract executed, effective date in hand</label>
+    <p class="src">Sources, checked November 1, 2026: Anthem, <a href="https://www.anthem.com/oh/provider/state-federal/join-our-network">Join Our Network, Ohio State and Federal Programs</a>, and Anthem's Ohio Medicaid provider orientation posted at anthem.com/oh/provider.</p>
+  </div>
+
+  <div class="card">
+    <h2>Buckeye Health Plan</h2>
+    <p><strong>The door:</strong> Buckeye's Become a Provider page, which routes you to a join our network form matched to your situation: Waiver-Only, Individual or Solo, Facility or Agency, or Group. Pick the form that matches how you bill, under your own tax ID or under a group or agency.</p>
+    <p><strong>Panel status, in the plan's own words:</strong> on the day this page was checked, Buckeye's page said it is only expanding its network to support regulatory requirements and maintain appropriate member access, and that contract requests are currently being evaluated based on provider type, specialty, and geographic need. Send the form anyway; the evaluation is theirs to make, and a written answer with a reason is worth more than an unasked question.</p>
+    <label class="check"><input type="checkbox" data-item="buckeye-request"> Buckeye Health Plan: join our network form submitted</label>
+    <label class="check"><input type="checkbox" data-item="buckeye-done"> Buckeye Health Plan: contract executed, effective date in hand</label>
+    <p class="src">Source, checked November 1, 2026: Buckeye Health Plan, <a href="https://www.buckeyehealthplan.com/providers/become-a-provider.html">Become a Provider</a>.</p>
+  </div>
+
+  <div class="card">
+    <h2>CareSource</h2>
+    <p><strong>The door:</strong> the New Health Partner Contract Form, reached from CareSource's Become a CareSource Provider page. CareSource is explicit that contracting and credentialing are two different processes: contracting starts with that form, and credentialing runs through ODM's centralized credentialing in PNM, the same Door 1 system. CareSource counts the process finished when you receive your welcome letter with your CareSource ID number.</p>
+    <p><strong>Behavioral health specifics, from CareSource's own Ohio Medicaid Behavioral Health Carve-In page:</strong> to start contracting you will need your group's IRS name, tax ID number, the NPI number for each ODM and OhioMHAS specialty (Mental Health is specialty 84, Substance Use Disorder is specialty 95), and a W-9. Groups in initial contracting may also be required to submit a roster of rendering providers for each specialty, with each practitioner's Medicaid ID, NPI, name, type, and specialty.</p>
+    <p>Provider Services: 1-800-488-0134.</p>
+    <label class="check"><input type="checkbox" data-item="caresource-request"> CareSource: New Health Partner Contract Form submitted</label>
+    <label class="check"><input type="checkbox" data-item="caresource-done"> CareSource: welcome letter with CareSource ID received</label>
+    <p class="src">Sources, checked November 1, 2026: CareSource, <a href="https://www.caresource.com/oh/providers/education/patient-care/behavioral-health-carve-in/medicaid/">Behavioral Health Carve-In, Ohio Medicaid</a>, and the <a href="https://secureforms.caresource.com/en/Healthpartnercontract">New Health Partner Contract Form</a>.</p>
+  </div>
+
+  <div class="card">
+    <h2>Humana Healthy Horizons in Ohio</h2>
+    <p><strong>The door:</strong> Humana's Join Our Network participation request for Ohio Medicaid, with separate request routes for medical providers and behavioral health providers. Humana's 2026 Ohio provider manual separates the two state and plan functions the same way this page does: provider enrollment is an ODM function through PNM, and contracting is the plan's function.</p>
+    <p>Contracting questions go to the plan's Ohio network team: medical providers, OhioNetworkSpecialist@humana.com; behavioral health providers, OHBHMedicaid@humana.com. Those are the addresses Humana prints in its own Ohio provider manual.</p>
+    <label class="check"><input type="checkbox" data-item="humana-request"> Humana Healthy Horizons: participation request sent</label>
+    <label class="check"><input type="checkbox" data-item="humana-done"> Humana Healthy Horizons: contract executed, effective date in hand</label>
+    <p class="src">Source, checked November 1, 2026: Humana, <a href="https://assets.humana.com/is/content/humana/2025_OH_Provider_Manualpdf">Humana Healthy Horizons in Ohio Provider Manual</a>, provider enrollment and contracting sections.</p>
+  </div>
+
+  <div class="card">
+    <h2>Molina Healthcare of Ohio</h2>
+    <p><strong>The door:</strong> the Ohio Provider Contract Request Form, emailed to OHContractRequests@MolinaHealthcare.com. Molina's Ohio contracting guide sets the prerequisite in writing: before applying with Molina to become a contracted provider, you must be actively enrolled with ODM, with an active Medicaid ID for each billing NPI, under federal rule 42 CFR 438.602. After the form, Molina's contracting team sends the contracting documents; once your signed contract and documents are received, Molina countersigns and your in-network effective date is set in the contract and the welcome letter.</p>
+    <label class="check"><input type="checkbox" data-item="molina-request"> Molina: Ohio Provider Contract Request Form sent</label>
+    <label class="check"><input type="checkbox" data-item="molina-done"> Molina: contract countersigned, welcome letter received</label>
+    <p class="src">Source, checked November 1, 2026: Molina Healthcare, <a href="https://www.molinahealthcare.com/-/media/Project/PWS/Healthcare/PDF/PDF/Providers/Join-Our-Network/OH/MHO-Medicaid-MMP-Provider-Contracting-Guide-508.pdf">Ohio Provider Contracting Guide</a>.</p>
+  </div>
+
+  <div class="card">
+    <h2>UnitedHealthcare Community Plan of Ohio</h2>
+    <p><strong>The door:</strong> the Join Our Network application on UnitedHealthcare's Ohio Community Plan provider page at UHCprovider.com. The plan describes three phases: start the application (you can save progress and come back), UnitedHealthcare reviews the information, and then contracting follows. For Ohio Medicaid, the plan's own page routes credentialing and attestation updates through the Ohio Department of Medicaid, which is the centralized credentialing in Door 1. Behavioral health practitioners go through a separate door inside the UnitedHealthcare family: Optum Behavioral Health Solutions, at providerexpress.com.</p>
+    <label class="check"><input type="checkbox" data-item="uhc-request"> UnitedHealthcare Community Plan: network application started</label>
+    <label class="check"><input type="checkbox" data-item="uhc-done"> UnitedHealthcare Community Plan: contract executed, effective date in hand</label>
+    <p class="src">Sources, checked November 1, 2026: UnitedHealthcare, <a href="https://ams-gateway.uhcprovider.com/en/health-plans-by-state/ohio-health-plans/oh-comm-plan-home.html">UnitedHealthcare Community Plan of Ohio provider page</a>, Join Our Network and credentialing sections.</p>
+  </div>
+
+  <div class="card">
+    <h2>OhioRISE: a separate door, only if you serve youth</h2>
+    <p>OhioRISE is Ohio Medicaid's specialized program for youth with complex behavioral health and multisystem needs. It is not one of the seven plans above and it is not included in any of their contracts. It is run by Aetna Better Health of Ohio under its own contract with ODM, with its own provider network. If your agency serves this population, this door matters as much as any plan above. If it does not, skip this card; it is not required for general Ohio Medicaid participation.</p>
+    <p><strong>The door:</strong> Aetna Better Health of Ohio's Join Our Network page for Ohio providers. Aetna requires an active Medicaid ID first, so Door 1 still comes first. Aetna's OhioRISE network application packet, with the contracting instructions and the Aetna Medicaid provider agreement, is requested and returned through OHRISE-Network@aetna.com.</p>
+    <label class="check"><input type="checkbox" data-item="ohiorise-request"> OhioRISE (Aetna): contract package requested or sent</label>
+    <label class="check"><input type="checkbox" data-item="ohiorise-done"> OhioRISE (Aetna): contract executed, effective date in hand</label>
+    <p class="src">Sources, checked November 1, 2026: Aetna Better Health of Ohio, <a href="https://es.aetnabetterhealth.com/ohio/providers/join">Join Our Network, Ohio</a>; Ohio Medicaid Consumer Hotline plan listing, <a href="http://www.ohiomh.com/resources/medicaidfaq">ohiomh.com</a>, which lists OhioRISE under Aetna Better Health.</p>
+  </div>
+
+  <div class="card">
+    <h2>If a plan says no</h2>
+    <p>This section is Dr. Boswell's professional judgment, labeled that way on purpose. It is not a plan rule.</p>
+    <p>A denial from one plan says nothing about the other six. Each plan weighs specialty, county, and its own network adequacy separately, and panels open and close as membership shifts. Treat every no as a request for specifics: ask for the reason in writing, specified by specialty, by county, and by scope of services, and ask for the date the panel reopens or the request can be resubmitted. Keep filing the remaining plans in parallel while you wait. And keep the letters. A dated denial with a stated reason is documentation your next application, and your next conversation with that plan, can build on.</p>
+  </div>
+
+  <div class="card" id="capture">
+    <h2>Want a printable copy of your checklist?</h2>
+    <p>Optional. Leave your name and email and your checklist, with every step marked the way you have it above, will be sent to you as a clean copy you can print or hand to a business partner. Your progress and contact details are sent to Boswell Consulting Agency with the request. Your information is never sold.</p>
+    <form id="captureForm" novalidate>
+      <label for="fName">Full name</label>
+      <input type="text" id="fName" autocomplete="name" required>
+      <label for="fEmail">Email address</label>
+      <input type="email" id="fEmail" autocomplete="email" required>
+      <label for="fState">State</label>
+      <select id="fState" required>
+        <option value="">Choose your state</option>
+        <option>Alabama</option><option>Alaska</option><option>Arizona</option><option>Arkansas</option><option>California</option><option>Colorado</option><option>Connecticut</option><option>Delaware</option><option>District of Columbia</option><option>Florida</option><option>Georgia</option><option>Hawaii</option><option>Idaho</option><option>Illinois</option><option>Indiana</option><option>Iowa</option><option>Kansas</option><option>Kentucky</option><option>Louisiana</option><option>Maine</option><option>Maryland</option><option>Massachusetts</option><option>Michigan</option><option>Minnesota</option><option>Mississippi</option><option>Missouri</option><option>Montana</option><option>Nebraska</option><option>Nevada</option><option>New Hampshire</option><option>New Jersey</option><option>New Mexico</option><option>New York</option><option>North Carolina</option><option>North Dakota</option><option selected>Ohio</option><option>Oklahoma</option><option>Oregon</option><option>Pennsylvania</option><option>Rhode Island</option><option>South Carolina</option><option>South Dakota</option><option>Tennessee</option><option>Texas</option><option>Utah</option><option>Vermont</option><option>Virginia</option><option>Washington</option><option>West Virginia</option><option>Wisconsin</option><option>Wyoming</option><option>Not launched yet</option>
+      </select>
+      <label for="fType">Agency type</label>
+      <select id="fType" required>
+        <option value="">Choose your agency type</option>
+        <option>Behavioral health</option>
+        <option>Medicare-certified home health</option>
+        <option>Non-medical home care</option>
+        <option>Waiver services</option>
+        <option>Both</option>
+        <option>Other health care</option>
+        <option>Not launched yet</option>
+      </select>
+      <input type="text" id="fHoney" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <button type="submit" id="sendBtn">Email me my checklist</button>
+      <p class="err" id="sendErr">That did not go through. Check your connection and press the button again. Your checklist is still saved in this browser.</p>
+      <p class="fine" id="sentNote"></p>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>Methodology and sources</h2>
+    <p>Every door, form, phone number, and email address on this page was read on the official page of the Ohio Department of Medicaid or the plan itself, and each section carries its own source line with the link and the date checked, November 1, 2026. Plan pages change: forms move, panels open and close, and the moratorium dates above are the dates ODM published for this pause. If a plan's page says something different from this page today, the plan's page governs, and the difference is worth an email to the address in that plan's section.</p>
+    <p>How the work is sequenced, including filing all seven plans in parallel and asking for denial reasons specified by specialty, county, and scope, is Dr. Boswell's professional judgment from consulting work with agency owners, labeled that way on purpose.</p>
+    <p class="fine">This is an educational tracker built from public sources, not legal advice. Your information is never sold. This tool is run by Boswell Consulting Agency, the consulting practice of Dr. Devon Boswell, DBA.</p>
+  </div>
+
+  <p class="fine" style="text-align:center">A free tool from Boswell Consulting Agency. If payer enrollment is the problem you are working on, Dr. Boswell reviews problems like these free. You only pay if you want the fix built for you.<br>
+  More free tools: <a href="../">Home Health Agency Self-Audit</a> | <a href="../caregiver-turnover-cost-calculator/">Caregiver Turnover Cost Calculator</a> | <a href="../census-gap-calculator/">Client Acquisition and Census Gap Calculator</a></p>
+</div>
+
+<script src="tracker.js"></script>
+<script>
+(function () {
+  var ENDPOINT = "https://formsubmit.co/ajax/359af7a0ec42d917c26fedc684ecd01c";
+
+  function val(id) { return document.getElementById(id).value; }
+
+  var state = loadState(window.localStorage);
+
+  function renderProgress() {
+    var p = progressOf(state);
+    document.getElementById("progressBig").textContent = p.done + " of " + p.total;
+    document.getElementById("progressLabel").textContent =
+      "steps checked (" + p.pct + " percent). Saved in this browser only.";
+  }
+
+  var boxes = document.querySelectorAll("input[type=checkbox][data-item]");
+  Array.prototype.forEach.call(boxes, function (box) {
+    var id = box.getAttribute("data-item");
+    box.checked = !!state[id];
+    box.addEventListener("change", function () {
+      state = setItem(state, id, box.checked);
+      saveState(window.localStorage, state);
+      renderProgress();
+    });
+  });
+  renderProgress();
+
+  document.getElementById("resetBtn").addEventListener("click", function () {
+    state = defaultState();
+    saveState(window.localStorage, state);
+    Array.prototype.forEach.call(boxes, function (box) { box.checked = false; });
+    renderProgress();
+  });
+
+  document.getElementById("captureForm").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var err = document.getElementById("sendErr");
+    err.style.display = "none";
+    if (val("fHoney")) { return; }
+    var name = val("fName").trim(), email = val("fEmail").trim();
+    var st = val("fState"), type = val("fType");
+    if (!name || !email || !st || !type || email.indexOf("@") < 1) {
+      err.textContent = "Please add your name, a valid email, your state, and your agency type, then press the button again.";
+      err.style.display = "block";
+      return;
+    }
+    var p = progressOf(state);
+    var plans = planStatus(state);
+    var btn = document.getElementById("sendBtn");
+    btn.disabled = true;
+    btn.textContent = "Sending...";
+    var payload = {
+      _subject: "Ohio payer tracker checklist: " + name + " - " + p.done + " of " + p.total + " steps - Door 1 " + door1Status(state),
+      _template: "table",
+      name: name, email: email, state: st, agency_type: type,
+      steps_checked: p.done + " of " + p.total,
+      door1_odm_pnm: door1Status(state),
+      checklist: summaryText(state)
+    };
+    Object.keys(plans).forEach(function (planName) {
+      payload["plan_" + planName.replace(/[^a-z0-9]+/gi, "_").toLowerCase()] = plans[planName];
+    });
+    fetch(ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify(payload)
+    }).then(function (resp) {
+      if (!resp.ok) { throw new Error("send failed"); }
+      document.getElementById("sentNote").textContent = "Your request went through. Your checklist, marked the way you have it on this page, will be sent to " + email + ".";
+      btn.textContent = "Checklist requested";
+    }).catch(function () {
+      btn.disabled = false;
+      btn.textContent = "Email me my checklist";
+      err.textContent = "That did not go through. Check your connection and press the button again. Your checklist is still saved in this browser.";
+      err.style.display = "block";
+    });
+  });
+})();
+</script>
+</body>
+</html>
